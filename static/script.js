@@ -38,110 +38,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     markdownInput.addEventListener('input', updatePreview);
 
-    const initialMarkdown = `---
----
-
-# Bruce Wayne
-
-<div class="resume-header">
-  <span class="resume-header-item"><span class="iconify" data-icon="charm:person"></span> <a href="https://example.com/">example.com</a></span>
-  <span class="resume-header-item"><span class="iconify" data-icon="tabler:brand-github"></span> <a href="https://github.com/example">github.com/example</a></span>
-  <span class="resume-header-item no-separator"><span class="iconify" data-icon="tabler:phone"></span> <a href="https://wa.me/11234567890">(+1) 123-456-7890</a></span>
-</div>
-<div class="resume-header">
-  <span class="resume-header-item"><span class="iconify" data-icon="ic:outline-location-on"></span> 1234 Abc Street, Example, EX 01234</span>
-  <span class="resume-header-item"><span class="iconify" data-icon="tabler:brand-linkedin"></span> <a href="https://linkedin.com/in/example/">linkedin.com/in/example/</a></span>
-  <span class="resume-header-item no-separator"><span class="iconify" data-icon="tabler:mail"></span> <a href="mailto:mail@example.com">email@example.com</a></span>
-</div>
-
-## Experience
-
-<dl>
-  <dt>Machine Learning Engineer Intern</dt>
-  <dd>Slow Feet Technology</dd>
-  <dd>Jul 2021 - Present</dd>
-</dl>
-
-- Devised a new food-agnostic formulation for fine-grained cross-ingredient meal cooking and subsumed the recent popular works into the proposed scheme
-- Proposed a cream of mushroom soup recipe which is competitive when compared with the SOTA recipes with complex steps by only altering the way of cutting mushroom, published in NeurIPS 2099 (see <sup class="crossref-ref"><a href="#ref-P1">[~P1]</a></sup>)
-- Developed a pan for meal cooking which is benefiting the group members' research work
-
-<dl>
-  <dt>Reseach Intern</dt>
-  <dd>Paddling University</dd>
-  <dd>Aug 2020 - Present</dd>
-</dl>
-
-- Designed an efficient method for mapo tofu quality estimation via thermometer
-- Proposed a fast stir frying algorithm for tofu cooking problems, which specifies the amount of the hot sauce instead of using terms like "as much as you can", published in CVPR 2077 (see <sup class="crossref-ref"><a href="#ref-P2">[~P2]</a></sup>)
-- Outperformed SOTA methods while cooking much more efficient in experiments on popular tofu
-
-<dl>
-  <dt>Research Assistant</dt>
-  <dd>Huangdu Institute of Technology</dd>
-  <dd>Mar 2020 - Jun 2020</dd>
-</dl>
-
-- Proposed a novel framework consisting of a spoon and a pair of chopsticks for eating mapo toufu
-- Designed a tofu filtering strategy inspired by beans grinding method for building a dataset for this new task
-- Designed two new evaluation criteria to assess the novelty and diversity of the eating plans
-- Outperformed baselines and existed methods substantially in terms of diversity, novelty and coherence
-
-<dl>
-  <dt>Reseach Intern</dt>
-  <dd>Paddling University</dd>
-  <dd>Jul 2018 - Aug 2018</dd>
-</dl>
-
-- Designed two sandwiches consisting of breads and meat of two traditional bacon cheese burgers to make use of unused ingredients
-- Utilized the structure duality to boost the cooking speed of two dual tasks based on shared ingredients
-- Outperformed strong baselines on QWE'15 and ASDF'14 dataset
-
-## Education
-
-<dl>
-  <dt>M.S. in Computer Science</dt>
-  <dd>University of Charles River</dd>
-  <dd>Boston, MA</dd>
-  <dd>Sep 2021 - Jan 2023</dd>
-</dl>
-
-<dl>
-  <dt>B.Eng. in Software Engineering</dt>
-  <dd>Huangdu Institute of Technology</dd>
-  <dd>Shanghai, China</dd>
-  <dd>Sep 2016 - Jul 2020</dd>
-</dl>
-
-## Skills
-
-**Programming Languages:** <span class="iconify" data-icon="vscode-icons:file-type-python"></span> Python, <span class="iconify" data-icon="vscode-icons:file-type-js-official"></span> JavaScript / <span class="iconify" data-icon="vscode-icons:file-type-typescript-official"></span> TypeScript, <span class="iconify" data-icon="vscode-icons:file-type-html"></span> HTML / <span class="iconify" data-icon="vscode-icons:file-type-css"></span> CSS, <span class="iconify" data-icon="logos:java" data-inline="false"></span> Java
-
-**Tools and Frameworks:** Git, PyTorch, Keras, scikit-learn, Linux, Vue, React, Django, $\\LaTeX$
-
-**Languages:** English (proficient), Indonesia (native)
-
-## Awards and Honors
-
-**Gold**, International Collegiate Catching Fish Contest (ICCFC)   :   2018
-
-**First Prize**, China National Scholarship for Outstanding Dragons   :   2017, 2018
-
-## Publications
-
-<ul class="crossref-list">
-<li data-caption="[~P1]" id="ref-P1" class="crossref-item">
-<strong>Eating is All You Need</strong> <br/>
-<u>Haha Ha</u>, San Zhang <br/>
-<em>Conference on Neural Information Processing Systems (NeurIPS), 2099</em>
-</li>
-<li data-caption="[~P2]" id="ref-P2" class="crossref-item">
-<strong>You Only Cook Once: Unified, Real-Time Mapo Tofu Recipe</strong> <br/>
-<u>Haha Ha</u>, San Zhang, Si Li, Wu Wang <br/>
-<em>Computer Vision and Pattern Recognition Conference (CVPR), 2077 <strong>(Best Paper Honorable Mention)</strong></em>
-</li>
-</ul>
-`;
+    const initialMarkdown = fetch('/static/resume.md')
+      .then(response => response.text())
+      .then(data => {
+        markdownInput.value = data;
+        updatePreview(); // Render the preview after loading the markdown
+      })
+      .catch(error => console.error('Error loading resume.md:', error));// Load from static/resume.md;
     // Note: For LaTeX, make sure to escape backslashes in JS strings: $\LaTeX$ becomes $\\LaTeX$
     markdownInput.value = initialMarkdown.replace(/\\LaTeX/g, '\\\\LaTeX');
 
