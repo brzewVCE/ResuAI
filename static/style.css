@@ -4,7 +4,7 @@ body {
     line-height: 1.6;
     margin: 0;
     padding: 20px;
-    background-color: #f4f4f4;
+    background-color: white;
     color: #333;
 }
 
@@ -110,7 +110,7 @@ header p {
   margin-bottom: 0.25em;
   border-bottom-style: solid;
   border-bottom-width: 1px;
-  border-bottom-color: darkgrey;
+  border-bottom-color: white;
 }
 
 .markdown-body h2 {
@@ -320,9 +320,7 @@ header p {
   .markdown-body {
     background-color: white !important;
     color: black !important;
-    padding: 1cm; /* Standard page margins */
-    padding-top: 0; /* Reset top padding */
-    padding-bottom: auto; /* Reset bottom padding */
+    padding: 0; /* Reset padding for print */
     font-size: 10pt; /* Ensure font size is appropriate for print */
     box-shadow: none;
   }
