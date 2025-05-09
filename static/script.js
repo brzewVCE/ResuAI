@@ -5,9 +5,9 @@ document.addEventListener('DOMContentLoaded', () => {
     marked.setOptions({
         renderer: new marked.Renderer(),
         gfm: true,
-        breaks: false, // GFM behavior: single newlines are not <br>
+        breaks: false,
         pedantic: false,
-        sanitize: false, // Be careful with this if users can input arbitrary HTML
+        sanitize: false,
         smartLists: true,
         smartypants: false,
         xhtml: false
@@ -17,7 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const markdownText = markdownInput.value;
         htmlOutput.innerHTML = marked.parse(markdownText);
 
-        // Re-render LaTeX math expressions
         if (window.renderMathInElement) {
             renderMathInElement(htmlOutput, {
                 delimiters: [
@@ -29,54 +28,72 @@ document.addEventListener('DOMContentLoaded', () => {
                 throwOnError: false
             });
         }
-
-        // Re-scan for Iconify icons if necessary (usually not for span method if script is loaded)
-        // if (window.Iconify) {
-        //     window.Iconify.scan(htmlOutput);
-        // }
     }
 
     markdownInput.addEventListener('input', updatePreview);
+    updatePreview(); // Initial render (will be empty at first)
 
-    const initialMarkdown = fetch('/static/resume.md')
-      .then(response => response.text())
-      .then(data => {
-        markdownInput.value = data;
-        updatePreview(); // Render the preview after loading the markdown
-      })
-      .catch(error => console.error('Error loading resume.md:', error));// Load from static/resume.md;
-    // Note: For LaTeX, make sure to escape backslashes in JS strings: $\LaTeX$ becomes $\\LaTeX$
-    markdownInput.value = initialMarkdown.replace(/\\LaTeX/g, '\\\\LaTeX');
+    // --- Reset Button ---
+    const resetButton = document.createElement('button');
+    resetButton.id = 'reset-md-btn';
+    resetButton.textContent = "Reset to Bruce Wayne's Resume";
+    resetButton.style.marginLeft = '10px'; // Space it from the H2
+    resetButton.style.padding = '5px 10px';
+    resetButton.style.backgroundColor = '#dc3545'; // Red color
+    resetButton.style.color = 'white';
+    resetButton.style.border = 'none';
+    resetButton.style.borderRadius = '4px';
+    resetButton.style.cursor = 'pointer';
+    resetButton.style.fontSize = '0.8em';
 
 
-    updatePreview(); // Initial render
-});
+    const editorControlsDiv = document.querySelector('.editor-pane .editor-controls');
+    if (editorControlsDiv) {
+        editorControlsDiv.appendChild(resetButton); // Add button to the controls div
+    }
 
-// Add a button to your HTML, e.g., <button id="export-pdf-btn">Export as PDF</button>
-document.addEventListener('DOMContentLoaded', () => {
-    // ... (your existing script.js code)
 
+    resetButton.addEventListener('click', () => {
+        // Fetch the markdown file from the static folder
+        fetch('/static/bruce_wayne_resume.md') // Adjusted filename
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.text();
+            })
+            .then(data => {
+                markdownInput.value = data; // Set textarea value
+                updatePreview(); // Render the new content
+            })
+            .catch(error => {
+                console.error("Error loading bruce_wayne_resume.md:", error);
+                alert("Could not load the resume template. Check the console for details.");
+            });
+    });
+
+
+    // --- Export PDF Button ---
     const exportPdfButton = document.createElement('button');
     exportPdfButton.id = 'export-pdf-btn';
     exportPdfButton.textContent = 'Export as PDF';
-    exportPdfButton.style.marginTop = '10px';
-    exportPdfButton.style.padding = '10px 15px';
+    exportPdfButton.style.marginLeft = '10px'; // Space it from the H2
+    exportPdfButton.style.padding = '5px 10px';
     exportPdfButton.style.backgroundColor = '#28a745';
     exportPdfButton.style.color = 'white';
     exportPdfButton.style.border = 'none';
     exportPdfButton.style.borderRadius = '4px';
     exportPdfButton.style.cursor = 'pointer';
+    exportPdfButton.style.fontSize = '0.8em';
 
-    // Add it after the preview pane's h2
-    const previewPaneH2 = document.querySelector('.preview-pane h2');
-    if (previewPaneH2 && previewPaneH2.parentNode) {
-        previewPaneH2.parentNode.insertBefore(exportPdfButton, previewPaneH2.nextSibling);
+    const previewControlsDiv = document.querySelector('.preview-pane .preview-controls');
+     if (previewControlsDiv) {
+        previewControlsDiv.appendChild(exportPdfButton);
     }
 
 
     exportPdfButton.addEventListener('click', async () => {
-        const htmlContentToExport = document.getElementById('html-output').innerHTML; // Get innerHTML of the preview
-
+        const htmlContentToExport = document.getElementById('html-output').innerHTML;
         const formData = new FormData();
         formData.append('html_content', htmlContentToExport);
 
@@ -97,7 +114,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 URL.revokeObjectURL(link.href);
             } else {
                 console.error('PDF export failed:', response.statusText);
-                alert('Error exporting PDF: ' + await response.text());
+                const errorText = await response.text();
+                alert('Error exporting PDF: ' + errorText);
             }
         } catch (error) {
             console.error('Error during PDF export:', error);
