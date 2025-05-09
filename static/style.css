@@ -201,26 +201,26 @@ header p {
   max-width: 100%;
 }
 
-/* Header specific styling */
+/* In static/style.css */
 .markdown-body .resume-header {
-  text-align: center;
+  /* text-align: center; Remove this if using flexbox for centering */
   margin-bottom: 0.5em;
-}
-
-.markdown-body .resume-header h1 { /* This is already covered by .markdown-body h1 */
-  /* text-align: center; */
-  /* line-height: 1; */
-  /* margin-bottom: 8px; */
+  display: flex; /* Use Flexbox */
+  flex-wrap: wrap; /* Allow items to wrap if they don't fit */
+  justify-content: center; /* Center items horizontally */
+  align-items: center; /* Align items vertically */
+  gap: 0.5em; /* Space between items (replaces margin on items for inter-item spacing) */
 }
 
 .markdown-body .resume-header-item {
-  display: inline-block; /* Allows margin/padding and respects text-align from parent */
-  margin: 0 0.25em;
+  /* display: inline-block; No longer needed with flex parent */
+  /* margin: 0 0.25em; Replaced by gap on parent */
+  /* No specific display needed, flex item defaults are fine */
 }
 .markdown-body .resume-header-item:not(.no-separator)::after {
-  content: " | ";
-  margin-left: 0.5em;
-  color: darkgrey;
+   content: " | ";
+   margin-left: 0.5em; /* Keep this for the separator */
+   color: darkgrey;
 }
 
 

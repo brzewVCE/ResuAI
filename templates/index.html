@@ -21,15 +21,14 @@
 
         <main class="editor-layout">
             <section class="editor-pane">
-                <div class="editor-controls"> <!-- Added a div for controls -->
+                <div class="editor-controls">
                     <h2>Markdown Input</h2>
-                    <!-- Reset button will be added here by script.js -->
+                    <!-- Save and Reset buttons will be added here by script.js -->
                 </div>
-                <!-- Textarea starts empty -->
-                <textarea id="markdown-input" placeholder="Type your Markdown here..."></textarea>
+                <textarea id="markdown-input" placeholder="Type your Markdown here...">{{ initial_markdown | safe }}</textarea>
             </section>
             <section class="preview-pane">
-                <div class="preview-controls"> <!-- Added a div for controls -->
+                <div class="preview-controls">
                     <h2>HTML Preview</h2>
                     <!-- Export PDF button will be added here by script.js -->
                 </div>
@@ -40,6 +39,14 @@
         </main>
 
         <hr class="separator">
+        <div id="status-message" style="text-align: center; margin-bottom: 15px; font-weight: bold;"></div>
+
+
+        <article class="lorem-content">
+            <h2>Sample Content Area (Not part of Resume Preview)</h2>
+            <p><strong>Lorem Ipsum Dolor Sit Amet</strong></p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        </article>
 
         <footer>
             <p>© 2023 Your Awesome Editor</p>

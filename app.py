@@ -1,17 +1,65 @@
 # app.py
-from flask import Flask, render_template, request, send_file
+from flask import Flask, render_template, request, send_file, jsonify # Added jsonify
 from playwright.sync_api import sync_playwright
 import io
 import os
+import shutil # For copying file
 
 app = Flask(__name__)
 
-# REMOVE: RESUME_MD_PATH and its usage in index()
+PROJECT_ROOT = os.path.dirname(__file__)
+USER_RESUME_MD_PATH = os.path.join(PROJECT_ROOT, 'resume.md')
+TEMPLATE_RESUME_MD_PATH = os.path.join(PROJECT_ROOT, 'static', 'bruce_wayne_resume.md')
 
 @app.route('/')
 def index():
-    # The editor will start empty, content loaded by client-side JS on button click
-    return render_template('index.html', initial_markdown="") # Pass empty string or remove
+    initial_markdown_content = ""
+    
+    if os.path.exists(USER_RESUME_MD_PATH):
+        try:
+            with open(USER_RESUME_MD_PATH, 'r', encoding='utf-8') as f:
+                initial_markdown_content = f.read()
+            print(f"Loaded user resume from: {USER_RESUME_MD_PATH}")
+        except Exception as e:
+            print(f"Error reading {USER_RESUME_MD_PATH}: {e}. Trying template.")
+            # Fall through to template logic if user resume fails to load
+            initial_markdown_content = "" # Reset in case of partial read
+    
+    # If user_resume.md was not loaded (either didn't exist or failed to load)
+    if not initial_markdown_content and os.path.exists(TEMPLATE_RESUME_MD_PATH):
+        try:
+            # Copy template to user_resume.md if user_resume.md doesn't exist or failed to load
+            if not os.path.exists(USER_RESUME_MD_PATH) or initial_markdown_content == "": # Second condition handles failed load case
+                 shutil.copy2(TEMPLATE_RESUME_MD_PATH, USER_RESUME_MD_PATH)
+                 print(f"Copied template {TEMPLATE_RESUME_MD_PATH} to {USER_RESUME_MD_PATH}")
+            
+            # Now load the newly created/copied user_resume.md
+            with open(USER_RESUME_MD_PATH, 'r', encoding='utf-8') as f:
+                initial_markdown_content = f.read()
+            print(f"Loaded initial resume from (copied) template: {USER_RESUME_MD_PATH}")
+        except Exception as e:
+            print(f"Error copying or reading template {TEMPLATE_RESUME_MD_PATH} to {USER_RESUME_MD_PATH}: {e}. Editor will start empty.")
+            initial_markdown_content = "" # Ensure it's empty on failure
+            
+    elif not initial_markdown_content: # Neither user nor template resume found
+        print(f"Warning: Neither {USER_RESUME_MD_PATH} nor {TEMPLATE_RESUME_MD_PATH} found. Editor will start empty.")
+        
+    return render_template('index.html', initial_markdown=initial_markdown_content)
+
+@app.route('/save_markdown', methods=['POST'])
+def save_markdown():
+    try:
+        markdown_content = request.form.get('markdown_content')
+        if markdown_content is None: # Check for None, empty string is valid
+            return jsonify({"status": "error", "message": "No content provided."}), 400
+
+        with open(USER_RESUME_MD_PATH, 'w', encoding='utf-8') as f:
+            f.write(markdown_content)
+        print(f"Saved content to {USER_RESUME_MD_PATH}")
+        return jsonify({"status": "success", "message": "Resume saved successfully!"})
+    except Exception as e:
+        print(f"Error saving to {USER_RESUME_MD_PATH}: {e}")
+        return jsonify({"status": "error", "message": f"Error saving resume: {str(e)}"}), 500
 
 @app.route('/export_pdf', methods=['POST'])
 def export_pdf():
