@@ -78,7 +78,7 @@ header p {
 /* --- Resume Specific CSS (was #vue-smart-pages-preview, now .markdown-body) --- */
 
 .markdown-body {
-  background-color: white;
+  background-color: white !important; /* Override any other background */
   color: black;
   text-align: left;
   -moz-hyphens: auto;
@@ -320,7 +320,9 @@ header p {
   .markdown-body {
     background-color: white !important;
     color: black !important;
-    padding: 1in; /* Standard page margins */
+    padding: 1cm; /* Standard page margins */
+    padding-top: 0; /* Reset top padding */
+    padding-bottom: auto; /* Reset bottom padding */
     font-size: 10pt; /* Ensure font size is appropriate for print */
     box-shadow: none;
   }
