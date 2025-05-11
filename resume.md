@@ -1,7 +1,7 @@
 ---
 ---
 
-#  Nigga
+# Nigga
 
 <div class="resume-header">
   <span class="resume-header-item"><span class="iconify" data-icon="charm:person"></span> <a href="https://example.com/">example.com</a></span>
@@ -24,6 +24,7 @@
 
 - Devised a new food-agnostic formulation for fine-grained cross-ingredient meal cooking and subsumed the recent popular works into the proposed scheme
 - Proposed a cream of mushroom soup recipe which is competitive when compared with the SOTA recipes with complex steps by only altering the way of cutting mushroom, published in NeurIPS 2099 (see <sup class="crossref-ref"><a href="#ref-P1">[~P1]</a></sup>)
+- Developed a pan for meal cooking which is benefiting the group members' research work
 
 ## Skills
 
