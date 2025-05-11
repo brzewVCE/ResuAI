@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Markdown Resume Editor</title>
+    <title>Resume Builder</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://code.iconify.design/2/2.2.1/iconify.min.js"></script>
@@ -11,48 +11,110 @@
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/auto-render.min.js"
         onload="renderMathInElement(document.body);"></script>
+    <style>
+        .form-editor-pane { padding: 15px; border: 1px solid #ddd; background-color: #f9f9f9; margin-bottom:20px; border-radius: 4px;}
+        .form-editor-pane > h3 { margin-top: 0; color: #3498db; border-bottom: 1px solid #eee; padding-bottom: 5px;}
+        .form-section { margin-bottom: 20px; padding: 15px; border: 1px solid #e0e0e0; background-color: #fff; border-radius: 3px;}
+        .form-section > h4 { margin-top: 0; display: flex; justify-content: space-between; align-items: center; }
+        .form-group { margin-bottom: 10px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9em; }
+        .form-group input[type="text"], .form-group textarea, .form-group select {
+            width: calc(100% - 12px);
+            padding: 6px; border: 1px solid #ccc; border-radius: 3px; font-size: 0.95em;
+        }
+        .form-group textarea { min-height: 60px; resize: vertical; }
+        .form-editor-pane button, .form-section button {
+            padding: 6px 10px; background-color: #007bff; color: white; border: none;
+            border-radius: 3px; cursor: pointer; margin-right: 5px; margin-top:5px; font-size:0.9em;
+        }
+        .form-editor-pane button.remove-btn, .form-section button.remove-btn { background-color: #dc3545; }
+        .bullet-list { list-style: none; padding-left: 0; }
+        .bullet-list li { display: flex; align-items: center; margin-bottom: 5px;}
+        .bullet-list input { flex-grow: 1; margin-right: 5px; }
+        .editor-pane { display: none !important; } /* Hide Markdown textarea view */
+        .contact-item-row { display: grid; grid-template-columns: 1fr 2fr 2fr 1fr auto; gap: 5px; align-items: center; margin-bottom: 5px;}
+        .contact-item-row label { font-size: 0.8em; margin-bottom:0; }
+        .controls-header { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 15px; }
+    </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Live Markdown Editor</h1>
-            <p><em>(Resume template applied to preview)</em></p>
+            <h1>Resume Builder</h1>
         </header>
 
+<!-- ... (head and other sections) ... -->
+
+        <section class="form-editor-pane">
+            <h3>Edit Your Resume</h3>
+            <div class="controls-header" id="main-controls"></div>
+            <div id="status-message" style="text-align: center; margin-bottom: 15px; font-weight: bold;"></div>
+
+            <div id="resume-form-container">
+                <!-- Personal Info -->
+                <div class="form-section" id="personal-info-form">
+                    <h4>Personal Information</h4>
+                    <div class="form-group">
+                        <label for="resume-name">Full Name:</label>
+                        <input type="text" id="resume-name" data-path="name">
+                    </div>
+                    <div id="contact-items-buttons" style="margin-bottom: 10px;">
+                        <!-- Specific "Add Contact" buttons will go here -->
+                    </div>
+                    <div id="contact-items-container">
+                        <!-- Dynamic contact items -->
+                    </div>
+                </div>
+
+                <!-- Experience (no change from previous full example) -->
+                <div class="form-section" id="experience-form">
+                    <h4>Experience <button id="add-experience-btn">Add Experience</button></h4>
+                    <div id="experience-entries-container"></div>
+                </div>
+
+                <!-- Education (no change from previous full example) -->
+                <div class="form-section" id="education-form">
+                    <h4>Education <button id="add-education-btn">Add Education</button></h4>
+                    <div id="education-entries-container"></div>
+                </div>
+
+                <!-- Skills (NEW STRUCTURE) -->
+                <div class="form-section" id="skills-form">
+                    <h4>Skills <button id="add-skill-category-btn">Add Skill Category</button></h4>
+                    <div id="skill-categories-container">
+                        <!-- Dynamic skill categories and their entries -->
+                    </div>
+                </div>
+
+                <!-- Awards and Honors (no change from previous full example) -->
+                <div class="form-section" id="awards-form">
+                    <h4>Awards and Honors <button id="add-award-btn">Add Award</button></h4>
+                    <div id="award-entries-container"></div>
+                </div>
+
+                <!-- Publications (no change from previous full example) -->
+                <div class="form-section" id="publications-form">
+                    <h4>Publications <button id="add-publication-btn">Add Publication</button></h4>
+                    <div id="publication-entries-container"></div>
+                </div>
+            </div>
+        </section>
+<!-- ... (rest of the HTML) ... -->
+        <textarea id="markdown-input" style="display:none;">{{- initial_markdown | safe -}}</textarea>
+
         <main class="editor-layout">
-            <section class="editor-pane">
-                <div class="editor-controls">
-                    <h2>Markdown Input</h2>
-                    <!-- Save and Reset buttons will be added here by script.js -->
-                </div>
-                <textarea id="markdown-input" placeholder="Type your Markdown here...">{{ initial_markdown | safe }}</textarea>
-            </section>
-            <section class="preview-pane">
+            <section class="preview-pane" style="flex: 1 1 100%;"> <!-- Make preview take full width of this row -->
                 <div class="preview-controls">
-                    <h2>HTML Preview</h2>
-                    <!-- Export PDF button will be added here by script.js -->
+                    <h2>Resume Preview</h2>
+                    <!-- Export PDF button -->
                 </div>
-                <div id="html-output" class="markdown-body">
-                    <!-- Rendered HTML will appear here -->
-                </div>
+                <div id="html-output" class="markdown-body"></div>
             </section>
         </main>
-
         <hr class="separator">
-        <div id="status-message" style="text-align: center; margin-bottom: 15px; font-weight: bold;"></div>
-
-
-        <article class="lorem-content">
-            <h2>Sample Content Area (Not part of Resume Preview)</h2>
-            <p><strong>Lorem Ipsum Dolor Sit Amet</strong></p>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-        </article>
-
-        <footer>
-            <p>© 2023 Your Awesome Editor</p>
-        </footer>
+        <article class="lorem-content"><h2>Sample Content Area</h2><p>...</p></article>
+        <footer><p>© 2023 Your Awesome Editor</p></footer>
     </div>
-
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
