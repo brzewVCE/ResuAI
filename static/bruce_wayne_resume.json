@@ -1,0 +1,67 @@
+{
+    "name": "Bruce Wayne",
+    "contactItems": [
+        { "id": "bw_contact_phone", "type": "phone", "label": "Phone", "value": "(+1) 123-456-7890", "link": "tel:+11234567890" },
+        { "id": "bw_contact_email", "type": "email", "label": "Email", "value": "bruce@wayne.enterprises", "link": "mailto:bruce@wayne.enterprises" },
+        { "id": "bw_contact_location", "type": "location", "label": "Location", "value": "Wayne Manor, Gotham City", "link": "" },
+        { "id": "bw_contact_website", "type": "website", "label": "Website", "value": "wayne.enterprises", "link": "https://wayne.enterprises" },
+        { "id": "bw_contact_linkedin", "type": "linkedin", "label": "LinkedIn", "value": "linkedin.com/in/brucewayne", "link": "https://linkedin.com/in/brucewayne" },
+        { "id": "bw_contact_github", "type": "github", "label": "GitHub", "value": "github.com/thebatman", "link": "https://github.com/thebatman" }
+    ],
+    "experience": [
+        { 
+            "id": "bw_exp_1", 
+            "title": "CEO & Philanthropist", 
+            "company": "Wayne Enterprises", 
+            "date": "2005 - Present", 
+            "bullets": [
+                "Oversee global operations of a multi-billion dollar conglomerate.", 
+                "Drive innovation in technology, green energy, and urban renewal projects.",
+                "Fund numerous charitable initiatives through The Wayne Foundation."
+            ] 
+        },
+        {
+            "id": "bw_exp_2",
+            "title": "Vigilante",
+            "company": "Self-Employed (Nocturnal Division)",
+            "date": "2005 - Present",
+            "bullets": [
+                "Proactively reduced city-wide crime rates by an estimated 75% using proprietary methods and advanced technology (see <sup class=\"crossref-ref\"><a href=\"#ref-P1\">[~P1]</a></sup>).",
+                "Developed and deployed non-lethal deterrents and capture tools.",
+                "Mastered multiple martial arts and detective skills."
+            ]
+        }
+    ],
+    "education": [
+        { 
+            "id": "bw_edu_1", 
+            "degree": "Various (Self-Taught & Specialized Training)", 
+            "university": "Global Institutions of Advanced Studies", 
+            "location": "Worldwide", 
+            "date": "Ongoing", 
+            "bullets": [
+                "Expertise in Criminology, Forensic Science, Engineering, Business Administration.", 
+                "Extensive training in tactical driving, stealth, and escapology."
+            ] 
+        }
+    ],
+    "skills": [
+        { "id": "bw_skill_1", "categoryName": "Combat & Tactical", "entries": "Expert in over 127 forms of martial arts, Stealth, Marksmanship (non-lethal), Gadgetry Design & Usage, Tactical Planning" },
+        { "id": "bw_skill_2", "categoryName": "Intellectual & Business", "entries": "Genius-level Intellect, Detective Skills, Computer Hacking, Financial Management, Engineering, Chemistry, $\\LaTeX$ for formal reports" },
+        { "id": "bw_skill_3", "categoryName": "Human Languages", "entries": "English (Native), Spanish, French, Japanese, Mandarin, Russian (Fluent in all)" }
+    ],
+    "awards": [
+        { "id": "bw_award_1", "description": "Key to the City (Declined)", "year": "Several" },
+        { "id": "bw_award_2", "description": "Humanitarian of the Year (via Wayne Foundation)", "year": "Multiple" }
+    ],
+    "publications": [
+        { 
+            "id": "bw_pub_1", 
+            "refId": "P1", 
+            "caption": "[~P1]", 
+            "title": "A Comparative Study of Urban Crime Deterrence Methodologies", 
+            "authors": "<u>B. Wayne</u>, A. Pennyworth", 
+            "venue": "<em>Journal of Applied Criminology (Internal Monograph), 2023</em>" 
+        }
+    ]
+}

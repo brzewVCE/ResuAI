@@ -1,0 +1,88 @@
+{
+    "awards": [
+        {
+            "description": "Key to the City (Declined)",
+            "id": "bw_award_1",
+            "year": "Several"
+        },
+        {
+            "description": "Humanitarian of the Year (via Wayne Foundation)",
+            "id": "bw_award_2",
+            "year": "Multiple"
+        }
+    ],
+    "contactItems": [
+        {
+            "id": "bw_contact_email",
+            "label": "Email",
+            "link": "mailto:bruce@wayne.enterprises",
+            "type": "email",
+            "value": "bruce@wayne.enterprises"
+        }
+    ],
+    "education": [
+        {
+            "bullets": [
+                "Expertise in Criminology, Forensic Science, Engineering, Business Administration.",
+                "Extensive training in tactical driving, stealth, and escapology."
+            ],
+            "date": "Ongoing",
+            "degree": "Various (Self-Taught & Specialized Training)",
+            "id": "bw_edu_1",
+            "location": "Worldwide",
+            "university": "Global Institutions of Advanced Studies"
+        }
+    ],
+    "experience": [
+        {
+            "bullets": [
+                "Oversee global operations of a multi-billion dollar conglomerate.",
+                "Drive innovation in technology, green energy, and urban renewal projects.",
+                "Fund numerous charitable initiatives through The Wayne Foundation."
+            ],
+            "company": "Wayne Enterprises",
+            "date": "2005 - Present",
+            "id": "bw_exp_1",
+            "title": "CEO & Philanthropist"
+        },
+        {
+            "bullets": [
+                "Proactively reduced city-wide crime rates by an estimated 75% using proprietary methods and advanced technology (see <sup class=\"crossref-ref\"><a href=\"#ref-P1\">[~P1]</a></sup>).",
+                "Developed and deployed non-lethal deterrents and capture tools.",
+                "Mastered multiple martial arts and detective skills."
+            ],
+            "company": "Self-Employed (Nocturnal Division)",
+            "date": "2005 - Present",
+            "id": "bw_exp_2",
+            "title": "Vigilante"
+        }
+    ],
+    "name": "Bruce Wayne",
+    "publications": [
+        {
+            "authors": "<u>B. Wayne</u>, A. Pennyworth",
+            "caption": "[~P1]",
+            "id": "bw_pub_1",
+            "refId": "P1",
+            "title": "A Comparative Study of Urban Crime Deterrence Methodologies",
+            "venue": "<em>Journal of Applied Criminology (Internal Monograph), 2023</em>"
+        }
+    ],
+    "skills": [
+        {
+            "categoryName": "Combat & Tactical",
+            "entries": "Expert in over 127 forms of martial arts, Stealth, Marksmanship (non-lethal), Gadgetry Design & Usage, Tactical Planning",
+            "id": "bw_skill_1"
+        },
+        {
+            "categoryName": "Intellectual & Business",
+            "entries": "Genius-level Intellect, Detective Skills, Computer Hacking, Financial Management, Engineering, Chemistry, $\\LaTeX$ for formal reports",
+            "id": "bw_skill_2"
+        },
+        {
+            "categoryName": "Human Languages",
+            "entries": "English (Native), Spanish, French, Japanese, Mandarin, Russian (Fluent in all)",
+            "id": "bw_skill_3"
+        }
+    ]
+}

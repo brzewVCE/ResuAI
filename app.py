@@ -1,65 +1,117 @@
 # app.py
-from flask import Flask, render_template, request, send_file, jsonify # Added jsonify
+from flask import Flask, render_template, request, send_file, jsonify
 from playwright.sync_api import sync_playwright
 import io
 import os
 import shutil # For copying file
+import json # For handling JSON data
 
 app = Flask(__name__)
 
 PROJECT_ROOT = os.path.dirname(__file__)
-USER_RESUME_MD_PATH = os.path.join(PROJECT_ROOT, 'resume.md')
-TEMPLATE_RESUME_MD_PATH = os.path.join(PROJECT_ROOT, 'static', 'bruce_wayne_resume.md')
+USER_RESUME_MD_PATH = os.path.join(PROJECT_ROOT, 'resume.md') # For generated markdown
+USER_RESUME_JSON_PATH = os.path.join(PROJECT_ROOT, 'resume.json') # For resume data
+TEMPLATE_RESUME_JSON_PATH = os.path.join(PROJECT_ROOT, 'static', 'bruce_wayne_resume.json') # Template JSON
+
+MINIMAL_DEFAULT_JSON = {
+    "name": "Your Name",
+    "contactItems": [],
+    "experience": [],
+    "education": [],
+    "skills": [],
+    "awards": [],
+    "publications": []
+}
 
 @app.route('/')
 def index():
-    initial_markdown_content = ""
+    initial_resume_json_data = None
     
-    if os.path.exists(USER_RESUME_MD_PATH):
-        try:
-            with open(USER_RESUME_MD_PATH, 'r', encoding='utf-8') as f:
-                initial_markdown_content = f.read()
-            print(f"Loaded user resume from: {USER_RESUME_MD_PATH}")
-        except Exception as e:
-            print(f"Error reading {USER_RESUME_MD_PATH}: {e}. Trying template.")
-            # Fall through to template logic if user resume fails to load
-            initial_markdown_content = "" # Reset in case of partial read
-    
-    # If user_resume.md was not loaded (either didn't exist or failed to load)
-    if not initial_markdown_content and os.path.exists(TEMPLATE_RESUME_MD_PATH):
-        try:
-            # Copy template to user_resume.md if user_resume.md doesn't exist or failed to load
-            if not os.path.exists(USER_RESUME_MD_PATH) or initial_markdown_content == "": # Second condition handles failed load case
-                 shutil.copy2(TEMPLATE_RESUME_MD_PATH, USER_RESUME_MD_PATH)
-                 print(f"Copied template {TEMPLATE_RESUME_MD_PATH} to {USER_RESUME_MD_PATH}")
-            
-            # Now load the newly created/copied user_resume.md
-            with open(USER_RESUME_MD_PATH, 'r', encoding='utf-8') as f:
-                initial_markdown_content = f.read()
-            print(f"Loaded initial resume from (copied) template: {USER_RESUME_MD_PATH}")
-        except Exception as e:
-            print(f"Error copying or reading template {TEMPLATE_RESUME_MD_PATH} to {USER_RESUME_MD_PATH}: {e}. Editor will start empty.")
-            initial_markdown_content = "" # Ensure it's empty on failure
-            
-    elif not initial_markdown_content: # Neither user nor template resume found
-        print(f"Warning: Neither {USER_RESUME_MD_PATH} nor {TEMPLATE_RESUME_MD_PATH} found. Editor will start empty.")
-        
-    return render_template('index.html', initial_markdown=initial_markdown_content)
-
-@app.route('/save_markdown', methods=['POST'])
-def save_markdown():
     try:
-        markdown_content = request.form.get('markdown_content')
-        if markdown_content is None: # Check for None, empty string is valid
-            return jsonify({"status": "error", "message": "No content provided."}), 400
+        if os.path.exists(USER_RESUME_JSON_PATH):
+            with open(USER_RESUME_JSON_PATH, 'r', encoding='utf-8') as f:
+                initial_resume_json_data = json.load(f)
+            print(f"Loaded user resume data from: {USER_RESUME_JSON_PATH}")
+        else:
+            print(f"{USER_RESUME_JSON_PATH} not found. Attempting to use template.")
+            raise FileNotFoundError # Trigger template copy logic
+            
+    except (FileNotFoundError, json.JSONDecodeError) as e:
+        print(f"Error reading {USER_RESUME_JSON_PATH} or file not found: {e}. Trying template.")
+        try:
+            shutil.copy2(TEMPLATE_RESUME_JSON_PATH, USER_RESUME_JSON_PATH)
+            print(f"Copied template {TEMPLATE_RESUME_JSON_PATH} to {USER_RESUME_JSON_PATH}")
+            with open(USER_RESUME_JSON_PATH, 'r', encoding='utf-8') as f: # Read the newly copied file
+                initial_resume_json_data = json.load(f)
+            print(f"Loaded resume data from (copied) template: {USER_RESUME_JSON_PATH}")
+        except Exception as copy_e:
+            print(f"Error copying or reading template {TEMPLATE_RESUME_JSON_PATH} to {USER_RESUME_JSON_PATH}: {copy_e}. Using minimal default.")
+            initial_resume_json_data = MINIMAL_DEFAULT_JSON
+            # Optionally, try to save this minimal default to resume.json
+            try:
+                with open(USER_RESUME_JSON_PATH, 'w', encoding='utf-8') as f:
+                    json.dump(MINIMAL_DEFAULT_JSON, f, indent=4)
+                print(f"Saved minimal default JSON to {USER_RESUME_JSON_PATH}")
+            except Exception as save_minimal_e:
+                print(f"Could not save minimal default JSON to {USER_RESUME_JSON_PATH}: {save_minimal_e}")
 
-        with open(USER_RESUME_MD_PATH, 'w', encoding='utf-8') as f:
-            f.write(markdown_content)
-        print(f"Saved content to {USER_RESUME_MD_PATH}")
+
+    if initial_resume_json_data is None: # Should ideally not happen if logic above is correct
+        print("Critical error: initial_resume_json_data is None. Falling back to minimal default.")
+        initial_resume_json_data = MINIMAL_DEFAULT_JSON
+
+    initial_resume_json_str = json.dumps(initial_resume_json_data)
+        
+    return render_template('index.html', initial_resume_json_str=initial_resume_json_str)
+
+@app.route('/save_resume', methods=['POST'])
+def save_resume():
+    try:
+        resume_data_json_str = request.form.get('resume_data_json')
+        markdown_content = request.form.get('markdown_content')
+
+        if resume_data_json_str is None:
+            return jsonify({"status": "error", "message": "No JSON data provided."}), 400
+        if markdown_content is None: # Empty string for markdown is technically valid if resume is empty
+             return jsonify({"status": "error", "message": "No Markdown content provided."}), 400
+
+        # Save the JSON data
+        try:
+            resume_data = json.loads(resume_data_json_str) # Validate if it's proper JSON
+            with open(USER_RESUME_JSON_PATH, 'w', encoding='utf-8') as f:
+                json.dump(resume_data, f, indent=4)
+            print(f"Saved JSON data to {USER_RESUME_JSON_PATH}")
+        except json.JSONDecodeError:
+            return jsonify({"status": "error", "message": "Invalid JSON data provided."}), 400
+        except Exception as e_json:
+            print(f"Error saving JSON to {USER_RESUME_JSON_PATH}: {e_json}")
+            return jsonify({"status": "error", "message": f"Error saving resume JSON: {str(e_json)}"}), 500
+
+        # Save the Markdown content
+        try:
+            with open(USER_RESUME_MD_PATH, 'w', encoding='utf-8') as f:
+                f.write(markdown_content)
+            print(f"Saved Markdown content to {USER_RESUME_MD_PATH}")
+        except Exception as e_md:
+            print(f"Error saving Markdown to {USER_RESUME_MD_PATH}: {e_md}")
+            # Potentially return partial success or specific error, but for now, general error
+            return jsonify({"status": "error", "message": f"Error saving resume Markdown: {str(e_md)}"}), 500
+            
         return jsonify({"status": "success", "message": "Resume saved successfully!"})
+
     except Exception as e:
-        print(f"Error saving to {USER_RESUME_MD_PATH}: {e}")
+        print(f"Overall error in /save_resume: {e}")
         return jsonify({"status": "error", "message": f"Error saving resume: {str(e)}"}), 500
+
+@app.route('/get_template_json', methods=['GET'])
+def get_template_json():
+    try:
+        with open(TEMPLATE_RESUME_JSON_PATH, 'r', encoding='utf-8') as f:
+            template_data = json.load(f)
+        return jsonify(template_data)
+    except Exception as e:
+        print(f"Error reading template JSON {TEMPLATE_RESUME_JSON_PATH}: {e}")
+        return jsonify({"status": "error", "message": "Could not load template data."}), 500
 
 @app.route('/export_pdf', methods=['POST'])
 def export_pdf():
@@ -135,4 +187,17 @@ def export_pdf():
         return f"Error generating PDF with Playwright: <pre>{str(e)}</pre>", 500
 
 if __name__ == '__main__':
+    # Ensure static template JSON exists
+    if not os.path.exists(TEMPLATE_RESUME_JSON_PATH):
+        print(f"CRITICAL: Template JSON file not found at {TEMPLATE_RESUME_JSON_PATH}")
+        print("Please create it with the default resume data.")
+        # As a fallback, create a minimal one if it's missing, so app can run
+        try:
+            os.makedirs(os.path.join(PROJECT_ROOT, 'static'), exist_ok=True)
+            with open(TEMPLATE_RESUME_JSON_PATH, 'w', encoding='utf-8') as f_template:
+                json.dump(MINIMAL_DEFAULT_JSON, f_template, indent=4)
+            print(f"Created a minimal fallback template at {TEMPLATE_RESUME_JSON_PATH}")
+        except Exception as e_create_template:
+            print(f"Failed to create minimal fallback template: {e_create_template}")
+
     app.run(debug=True, host='0.0.0.0')

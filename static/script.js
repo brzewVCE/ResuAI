@@ -1,13 +1,11 @@
 // static/script.js
 document.addEventListener('DOMContentLoaded', () => {
     // --- DOM Elements ---
-    const markdownInput = document.getElementById('markdown-input');
+    const markdownInput = document.getElementById('markdown-input'); // Hidden
     const htmlOutput = document.getElementById('html-output');
     const statusMessageDiv = document.getElementById('status-message');
     const mainControlsContainer = document.getElementById('main-controls');
-    // const mainLayout = document.getElementById('main-layout'); // No longer needed for toggle
-    // const previewToggleBtn = document.getElementById('preview-toggle-btn'); // No longer needed
-    const previewPaneWrapper = document.getElementById('preview-pane-wrapper'); // Still useful for targeting
+    const previewPaneWrapper = document.getElementById('preview-pane-wrapper'); 
 
     const nameInput = document.getElementById('resume-name');
     const contactItemsButtonsContainer = document.getElementById('contact-items-buttons');
@@ -31,44 +29,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Utility ---
     function uid() { return Date.now().toString(36) + Math.random().toString(36).substr(2, 9); }
 
-    // --- Default Resume Data ---
-    const defaultResumeData = {
-        name: "Bruce Wayne",
-        contactItems: [
-            { id: uid(), type: 'phone', label: 'Phone', value: '(+1) 123-456-7890', link: 'tel:+11234567890' },
-            { id: uid(), type: 'email', label: 'Email', value: 'email@example.com', link: 'mailto:email@example.com' },
-            { id: uid(), type: 'location', label: 'Location', value: '1234 Abc Street, Example, EX 01234', link: '' },
-            { id: uid(), type: 'website', label: 'Website', value: 'example.com', link: 'https://example.com' },
-            { id: uid(), type: 'linkedin', label: 'LinkedIn', value: 'linkedin.com/in/example', link: 'https://linkedin.com/in/example' },
-            { id: uid(), type: 'github', label: 'GitHub', value: 'github.com/example', link: 'https://github.com/example' }
-        ],
-        experience: [
-            { id: uid(), title: "Machine Learning Engineer Intern", company: "Slow Feet Technology", date: "Jul 2021 - Present", bullets: ["Devised a new food-agnostic formulation... (see <sup class=\"crossref-ref\"><a href=\"#ref-P1\">[~P1]</a></sup>)", "Developed a pan for meal cooking..."] }
-        ],
-        education: [
-            { id: uid(), degree: "M.S. in Computer Science", university: "University of Charles River", location: "Boston, MA", date: "Sep 2021 - Jan 2023", bullets: ["Relevant Coursework: Advanced Algorithms...", "Thesis: Efficient Meal Prep..."] },
-        ],
-        skills: [
-            { id: uid(), categoryName: "Programming Languages", entries: "Python (NumPy, Pandas), JavaScript (React, Node.js), TypeScript, Java, C++" },
-            { id: uid(), categoryName: "Tools & Frameworks", entries: "Git, Docker, Kubernetes, PyTorch, TensorFlow, Django, $\\LaTeX$" },
-            { id: uid(), categoryName: "Human Languages", entries: "English (Native), Indonesian (Fluent)" }
-        ],
-        awards: [
-            { id: uid(), description: "Gold, ICCFC", year: "2018" }
-        ],
-        publications: [
-            { id: uid(), refId: "P1", caption: "[~P1]", title: "Eating is All You Need", authors: "<u>Haha Ha</u>, San Zhang", venue: "<em>NeurIPS, 2099</em>" },
-        ]
+    // --- Resume Data ---
+    let resumeData; // Will be initialized by initializeEditor() from server-provided JSON
+
+    const MINIMAL_CLIENT_FALLBACK_RESUME_DATA = {
+        name: "Your Name (Fallback)",
+        contactItems: [], experience: [], education: [],
+        skills: [], awards: [], publications: []
     };
-    let resumeData = JSON.parse(JSON.stringify(defaultResumeData));
+
 
     // --- Marked.js Setup ---
     marked.setOptions({ gfm: true, breaks: false, pedantic: false, sanitize: false });
 
     // --- Core Update Function ---
-    function updateAll() {
+    function updatePreviewAndHiddenMD() {
         const md = generateMarkdownFromData();
-        markdownInput.value = md;
+        markdownInput.value = md; // For saving
         htmlOutput.innerHTML = marked.parse(md);
         if (window.renderMathInElement) {
             renderMathInElement(htmlOutput, { delimiters: [{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false},{left:"\\(",right:"\\)",display:false},{left:"\\[",right:"\\]",display:true}] });
@@ -78,9 +55,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Markdown Generation ---
     function generateMarkdownFromData() {
+        if (!resumeData) return "# Error: Resume data not loaded."; // Guard
         let md = "";
         md += `# ${resumeData.name || "Your Name"}\n\n`;
-        const contactItemsForHeader = resumeData.contactItems.filter(item => item.value && item.value.trim() !== '');
+        const contactItemsForHeader = (resumeData.contactItems || []).filter(item => item.value && item.value.trim() !== '');
         const getIconForContact = (item) => {
             const type = item.type ? item.type.toLowerCase() : '';
             const label = item.label ? item.label.toLowerCase() : '';
@@ -154,37 +132,53 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- UI Rendering & Event Handling ---
-    function createFormGroup(labelText, inputElement) { /* ... same ... */
+    function createFormGroup(labelText, inputElement) {
         const group = document.createElement('div'); group.className = 'form-group';
         const label = document.createElement('label'); label.textContent = labelText;
         group.appendChild(label); group.appendChild(inputElement); return group;
     }
-    function createInputElement(type, value, placeholder, className, dataAttrs = {}, onChangeCallback) { /* ... same ... */
+    function createInputElement(type, value, placeholder, className, dataAttrs = {}, onChangeCallback) {
         const input = document.createElement(type === 'textarea' ? 'textarea' : 'input');
         if (type !== 'textarea') input.type = type; input.className = className;
         input.value = value || ''; if (placeholder) input.placeholder = placeholder;
         Object.entries(dataAttrs).forEach(([key, val]) => input.dataset[key] = val);
-        if (onChangeCallback) input.addEventListener('change', onChangeCallback);
-        else input.addEventListener('change', handleGenericInputChange); return input;
+        if (onChangeCallback) input.addEventListener('input', onChangeCallback); // Use 'input' for more responsive updates
+        else input.addEventListener('input', handleGenericInputChange); 
+        return input;
     }
-    function createButton(text, className, onClick, title = '') { /* ... same ... */
-        const btn = document.createElement('button'); btn.textContent = text;
-        btn.className = className; if (title) btn.title = title;
+    function createButton(text, classNameOrId, onClick, title = '') {
+        const btn = document.createElement('button'); btn.id = classNameOrId;
+        btn.textContent = text; btn.className = classNameOrId.split(' ')[0]; // Use first class for general styling if multiple are passed
+        if (title) btn.title = title;
         btn.addEventListener('click', onClick); return btn;
     }
-    function handleGenericInputChange(event) { /* ... same ... */
+    function handleGenericInputChange(event) {
         const path = event.target.dataset.path;
         const value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
+        
+        if (!resumeData) { console.error("resumeData not initialized!"); return; }
         let current = resumeData; const parts = path.split('.');
         try {
-            for (let i = 0; i < parts.length - 1; i++) { current = current[parts[i]]; }
+            for (let i = 0; i < parts.length - 1; i++) { 
+                if (!current[parts[i]]) { // Ensure path exists, especially for arrays/objects
+                    if (Array.isArray(current) && !isNaN(parseInt(parts[i]))) {
+                         // This case should ideally be handled by render functions ensuring array elements exist
+                        console.warn(`Attempting to access undefined index ${parts[i]} in array part of path ${path}`);
+                        return; // Or create the element, but that's risky here
+                    } else {
+                        current[parts[i]] = {}; // Create object if path segment is missing
+                    }
+                }
+                current = current[parts[i]]; 
+            }
             current[parts[parts.length - 1]] = value;
         } catch (e) { console.error("Error updating data for path:", path, e); }
-        updateAll();
+        updatePreviewAndHiddenMD(); 
     }
 
-    function renderContactItems() { /* ... same as previous (with no icon input / noSep checkbox) ... */
+    function renderContactItems() {
         contactItemsContainer.innerHTML = '';
+        if (!resumeData || !resumeData.contactItems) return;
         resumeData.contactItems.forEach((item, index) => {
             const itemDiv = document.createElement('div'); itemDiv.className = 'contact-item-row'; itemDiv.dataset.id = item.id;
             itemDiv.appendChild(createFormGroup('Label:', createInputElement('text', item.label, 'Label (e.g., Phone)', `contact-label`, { path: `contactItems.${index}.label` })));
@@ -193,13 +187,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const actionsDiv = document.createElement('div'); actionsDiv.className = 'contact-item-actions';
             actionsDiv.appendChild(createButton("Remove", "remove-btn", () => {
                 resumeData.contactItems = resumeData.contactItems.filter(ci => ci.id !== item.id);
-                renderContactItems(); updateAll();
+                renderContactItems(); updatePreviewAndHiddenMD();
             }));
             itemDiv.appendChild(actionsDiv);
             contactItemsContainer.appendChild(itemDiv);
         });
     }
-    const contactTypes = [ /* ... same ... */
+    const contactTypes = [
         { type: 'phone', label: 'Phone', defaultIcon: 'tabler:phone', defaultLinkPrefix: 'tel:'},
         { type: 'email', label: 'Email', defaultIcon: 'tabler:mail', defaultLinkPrefix: 'mailto:'},
         { type: 'website', label: 'Website', defaultIcon: 'charm:link', defaultLinkPrefix: 'https://' },
@@ -208,14 +202,15 @@ document.addEventListener('DOMContentLoaded', () => {
         { type: 'github', label: 'GitHub', defaultIcon: 'tabler:brand-github', defaultLinkPrefix: 'https://github.com/' }
     ];
     contactItemsButtonsContainer.innerHTML = '';
-    contactTypes.forEach(contact => { /* ... same ... */
-        contactItemsButtonsContainer.appendChild(createButton(`Add ${contact.label}`, `add-${contact.type}-btn`, () => {
+    contactTypes.forEach(contact => {
+        contactItemsButtonsContainer.appendChild(createButton(`Add ${contact.label}`, `add-${contact.type}-btn form-button`, () => { // Added generic form-button class
+            if (!resumeData.contactItems) resumeData.contactItems = [];
             resumeData.contactItems.push({ id: uid(), type: contact.type, label: contact.label, value: '', link: contact.defaultLinkPrefix || '' });
-            renderContactItems(); updateAll();
+            renderContactItems(); updatePreviewAndHiddenMD();
         }));
     });
 
-    function renderListEntry(item, index, sectionName, fieldsConfig, bulletsConfig) { /* ... same ... */
+    function renderListEntry(item, index, sectionName, fieldsConfig, bulletsConfig) {
         const entryDiv = document.createElement('div'); entryDiv.className = `form-group ${sectionName}-entry`;
         entryDiv.style.border = "1px solid #f0f0f0"; entryDiv.style.padding = "10px"; entryDiv.style.marginBottom = "10px"; entryDiv.style.borderRadius="3px";
         entryDiv.dataset.id = item.id;
@@ -226,85 +221,125 @@ document.addEventListener('DOMContentLoaded', () => {
             (item[bulletsConfig.key] || []).forEach((bullet, bIndex) => {
                 const li = document.createElement('li');
                 li.appendChild(createInputElement('text', bullet, bulletsConfig.placeholder, `${sectionName}-bullet`, { path: `${sectionName}.${index}.${bulletsConfig.key}.${bIndex}` }));
-                li.appendChild(createButton("X", "remove-btn", () => { item[bulletsConfig.key].splice(bIndex, 1); populateFormsFromData(); }));
+                li.appendChild(createButton("X", "remove-btn bullet-remove-btn", () => { item[bulletsConfig.key].splice(bIndex, 1); populateAllFormsFromCurrentData(); updatePreviewAndHiddenMD(); }));
                 bulletsUl.appendChild(li);
             });
             entryDiv.appendChild(bulletsUl);
-            entryDiv.appendChild(createButton(bulletsConfig.addBtnText, `add-bullet-${sectionName}`, () => {
-                if (!item[bulletsConfig.key]) item[bulletsConfig.key] = []; item[bulletsConfig.key].push(""); populateFormsFromData();
+            entryDiv.appendChild(createButton(bulletsConfig.addBtnText, `add-bullet-${sectionName} form-button`, () => { // Added form-button
+                if (!item[bulletsConfig.key]) item[bulletsConfig.key] = []; item[bulletsConfig.key].push(""); populateAllFormsFromCurrentData(); updatePreviewAndHiddenMD();
             }));
         }
-        entryDiv.appendChild(createButton(`Remove ${fieldsConfig[0].label}`, "remove-btn", () => {
-            resumeData[sectionName] = resumeData[sectionName].filter(e => e.id !== item.id); populateFormsFromData();
+        entryDiv.appendChild(createButton(`Remove ${fieldsConfig[0].label}`, "remove-btn section-remove-btn", () => { // Added section-remove-btn
+            resumeData[sectionName] = resumeData[sectionName].filter(e => e.id !== item.id); populateAllFormsFromCurrentData(); updatePreviewAndHiddenMD();
         }));
         return entryDiv;
     }
 
     const experienceFields = [ {label: 'Title', key: 'title'}, {label: 'Company', key: 'company'}, {label: 'Date', key: 'date'}];
     const experienceBullets = {label: 'Responsibilities/Achievements:', key: 'bullets', placeholder: 'Bullet point...', addBtnText: 'Add Bullet'};
-    function renderExperienceForms() { experienceEntriesContainer.innerHTML = ''; resumeData.experience.forEach((item, i) => experienceEntriesContainer.appendChild(renderListEntry(item, i, 'experience', experienceFields, experienceBullets))); }
-    addExperienceBtn.addEventListener('click', () => { resumeData.experience.push({ id: uid(), title: "", company: "", date: "", bullets: [""] }); populateFormsFromData(); });
+    function renderExperienceForms() { experienceEntriesContainer.innerHTML = ''; if (!resumeData || !resumeData.experience) return; resumeData.experience.forEach((item, i) => experienceEntriesContainer.appendChild(renderListEntry(item, i, 'experience', experienceFields, experienceBullets))); }
+    addExperienceBtn.addEventListener('click', () => { if (!resumeData.experience) resumeData.experience = []; resumeData.experience.push({ id: uid(), title: "", company: "", date: "", bullets: [""] }); populateAllFormsFromCurrentData(); updatePreviewAndHiddenMD(); });
 
     const educationFields = [ {label: 'Degree', key: 'degree'}, {label: 'University', key: 'university'}, {label: 'Location', key: 'location'}, {label: 'Date', key: 'date'}];
     const educationBullets = {label: 'Details/Courses:', key: 'bullets', placeholder: 'Details...', addBtnText: 'Add Detail'};
-    function renderEducationForms() { educationEntriesContainer.innerHTML = ''; resumeData.education.forEach((item, i) => educationEntriesContainer.appendChild(renderListEntry(item, i, 'education', educationFields, educationBullets)));}
-    addEducationBtn.addEventListener('click', () => { resumeData.education.push({ id: uid(), degree: "", university: "", location: "", date: "", bullets: [] }); populateFormsFromData(); });
+    function renderEducationForms() { educationEntriesContainer.innerHTML = ''; if (!resumeData || !resumeData.education) return; resumeData.education.forEach((item, i) => educationEntriesContainer.appendChild(renderListEntry(item, i, 'education', educationFields, educationBullets)));}
+    addEducationBtn.addEventListener('click', () => { if (!resumeData.education) resumeData.education = []; resumeData.education.push({ id: uid(), degree: "", university: "", location: "", date: "", bullets: [] }); populateAllFormsFromCurrentData(); updatePreviewAndHiddenMD(); });
     
-    function renderSkillForms() { /* ... same ... */
+    function renderSkillForms() {
         skillCategoriesContainer.innerHTML = '';
+        if (!resumeData || !resumeData.skills) return;
         resumeData.skills.forEach((category, index) => {
             const catDiv = document.createElement('div'); catDiv.className = 'skill-category-entry'; catDiv.dataset.id = category.id;
             catDiv.appendChild(createFormGroup('Category Name:', createInputElement('text', category.categoryName, 'e.g., Programming Languages', `skill-category-name`, { path: `skills.${index}.categoryName` })));
             catDiv.appendChild(createFormGroup('Skills (one per line for GFM line breaks, or comma-separated):', createInputElement('textarea', category.entries, 'Python, Java, SQL...', `skill-category-entries`, { path: `skills.${index}.entries` })));
-            catDiv.appendChild(createButton("Remove Category", "remove-btn", () => {
-                resumeData.skills = resumeData.skills.filter(sc => sc.id !== category.id); renderSkillForms(); updateAll();
+            catDiv.appendChild(createButton("Remove Category", "remove-btn skill-remove-btn", () => { // Added skill-remove-btn
+                resumeData.skills = resumeData.skills.filter(sc => sc.id !== category.id); renderSkillForms(); updatePreviewAndHiddenMD();
             }));
             skillCategoriesContainer.appendChild(catDiv);
         });
     }
-    addSkillCategoryBtn.addEventListener('click', () => { resumeData.skills.push({ id: uid(), categoryName: "New Skill Category", entries: "" }); renderSkillForms(); updateAll(); });
+    addSkillCategoryBtn.addEventListener('click', () => { if (!resumeData.skills) resumeData.skills = []; resumeData.skills.push({ id: uid(), categoryName: "New Skill Category", entries: "" }); renderSkillForms(); updatePreviewAndHiddenMD(); });
 
     const awardFields = [ {label: 'Description', key: 'description'}, {label: 'Year (Optional)', key: 'year'}];
-    function renderAwardForms() { awardEntriesContainer.innerHTML = ''; resumeData.awards.forEach((item, i) => awardEntriesContainer.appendChild(renderListEntry(item, i, 'awards', awardFields, null))); }
-    addAwardBtn.addEventListener('click', () => { resumeData.awards.push({ id: uid(), description: "", year: "" }); populateFormsFromData(); });
+    function renderAwardForms() { awardEntriesContainer.innerHTML = ''; if (!resumeData || !resumeData.awards) return; resumeData.awards.forEach((item, i) => awardEntriesContainer.appendChild(renderListEntry(item, i, 'awards', awardFields, null))); }
+    addAwardBtn.addEventListener('click', () => { if (!resumeData.awards) resumeData.awards = []; resumeData.awards.push({ id: uid(), description: "", year: "" }); populateAllFormsFromCurrentData(); updatePreviewAndHiddenMD(); });
 
     const publicationFields = [ {label: 'Ref ID (e.g. P1)', key: 'refId'}, {label: 'Caption (e.g. [~P1])', key: 'caption'}, {label: 'Title', key: 'title'}, {label: 'Authors', key: 'authors'}, {label: 'Venue/Journal', key: 'venue'} ];
-    function renderPublicationForms() { publicationEntriesContainer.innerHTML = ''; resumeData.publications.forEach((item, i) => publicationEntriesContainer.appendChild(renderListEntry(item, i, 'publications', publicationFields, null)));}
-    addPublicationBtn.addEventListener('click', () => { resumeData.publications.push({ id: uid(), refId: `P${resumeData.publications.length+1}`, caption: `[~P${resumeData.publications.length+1}]`, title: "", authors: "", venue: "" }); populateFormsFromData(); });
+    function renderPublicationForms() { publicationEntriesContainer.innerHTML = ''; if (!resumeData || !resumeData.publications) return; resumeData.publications.forEach((item, i) => publicationEntriesContainer.appendChild(renderListEntry(item, i, 'publications', publicationFields, null)));}
+    addPublicationBtn.addEventListener('click', () => { if(!resumeData.publications) resumeData.publications = []; resumeData.publications.push({ id: uid(), refId: `P${resumeData.publications.length+1}`, caption: `[~P${resumeData.publications.length+1}]`, title: "", authors: "", venue: "" }); populateAllFormsFromCurrentData(); updatePreviewAndHiddenMD(); });
 
-    function populateFormsFromData() { /* ... same ... */
-        nameInput.value = resumeData.name; nameInput.dataset.path = "name"; 
-        renderContactItems(); renderExperienceForms(); renderEducationForms();
-        renderSkillForms(); renderAwardForms(); renderPublicationForms();
-        updateAll();
+    function populateAllFormsFromCurrentData() {
+        if (!resumeData) {
+            console.error("Cannot populate forms, resumeData is not initialized.");
+            nameInput.value = ''; // Clear name input if data is missing
+            // Clear other containers too
+            contactItemsContainer.innerHTML = '';
+            experienceEntriesContainer.innerHTML = '';
+            educationEntriesContainer.innerHTML = '';
+            skillCategoriesContainer.innerHTML = '';
+            awardEntriesContainer.innerHTML = '';
+            publicationEntriesContainer.innerHTML = '';
+            return;
+        }
+        nameInput.value = resumeData.name || '';
+        renderContactItems();
+        renderExperienceForms();
+        renderEducationForms();
+        renderSkillForms();
+        renderAwardForms();
+        renderPublicationForms();
     }
-    nameInput.addEventListener('change', handleGenericInputChange);
+    nameInput.addEventListener('input', handleGenericInputChange); 
 
-    function showStatusMessage(message, isError = false) { /* ... same ... */
-        statusMessageDiv.textContent = message; statusMessageDiv.style.color = isError ? 'rgb(220, 53, 69)' : 'rgb(40, 167, 69)';
+    // --- Main Controls (Save, Reset) & Status Messages ---
+    function showStatusMessage(message, isError = false) {
+        statusMessageDiv.textContent = message;
+        statusMessageDiv.style.color = isError ? 'rgb(220, 53, 69)' : 'rgb(40, 167, 69)';
         setTimeout(() => statusMessageDiv.textContent = '', 5000);
     }
-    const saveButton = createButton("Save Resume", "save-md-btn", async () => { /* ... same ... */
-        const markdownToSave = generateMarkdownFromData(); const formData = new FormData();
+
+    const saveButton = createButton("Save Resume", "save-resume-btn", async () => {
+        if (!resumeData) {
+            showStatusMessage("Error: No resume data to save.", true);
+            return;
+        }
+        const markdownToSave = markdownInput.value; // Generated by updatePreviewAndHiddenMD
+        const resumeDataJsonString = JSON.stringify(resumeData);
+
+        const formData = new FormData(); 
+        formData.append('resume_data_json', resumeDataJsonString);
         formData.append('markdown_content', markdownToSave);
+        
         try {
-            const response = await fetch('/save_markdown', { method: 'POST', body: formData });
+            const response = await fetch('/save_resume', { method: 'POST', body: formData });
             const result = await response.json();
             showStatusMessage(result.message, !(response.ok && result.status === 'success'));
-        } catch (error) { showStatusMessage('Error saving resume.', true); console.error("Save error:", error); }
+        } catch (error) { showStatusMessage('Error saving resume: ' + error.message, true); console.error("Save error:", error); }
     });
-    const resetButton = createButton("Reset Form", "reset-md-btn", () => { /* ... same ... */
-        if (confirm("Are you sure you want to reset all form data to the default template? Unsaved changes will be lost.")) {
-            resumeData = JSON.parse(JSON.stringify(defaultResumeData));
-            populateFormsFromData();
-            showStatusMessage("Form reset to default template. Click 'Save Resume' to persist this version.");
+
+    const resetButton = createButton("Reset Form", "reset-resume-btn", async () => {
+        if (confirm("Are you sure you want to reset all form data to the default template? This will overwrite your current form edits. You'll need to 'Save Resume' afterwards to persist these changes.")) {
+            try {
+                const response = await fetch('/get_template_json');
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch template: ${response.statusText}`);
+                }
+                const templateData = await response.json();
+                resumeData = templateData; // Directly assign, no deep copy needed if it's fresh from server
+                populateAllFormsFromCurrentData();
+                updatePreviewAndHiddenMD(); 
+                showStatusMessage("Form reset to default template. Click 'Save Resume' to make this the new resume.json and resume.md.");
+            } catch (error) {
+                showStatusMessage('Error resetting form: ' + error.message, true);
+                console.error("Reset error:", error);
+            }
         }
     });
     mainControlsContainer.append(saveButton, resetButton);
 
-    // --- PDF Export Button --- RESTORED
+    // --- PDF Export Button ---
     const exportPdfButton = createButton("Export as PDF", "export-pdf-btn", async () => {
-        showStatusMessage("Generating PDF...", false); // Indicate processing
+        showStatusMessage("Generating PDF...", false);
         const htmlContentToExport = document.getElementById('html-output').innerHTML;
         const formData = new FormData();
         formData.append('html_content', htmlContentToExport);
@@ -313,13 +348,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (response.ok) {
                 const blob = await response.blob();
                 const link = document.createElement('a');
-                const safeName = (resumeData.name || "resume").replace(/[^a-z0-9_.-]/gi, '_').toLowerCase();
+                const safeName = ((resumeData && resumeData.name) || "resume").replace(/[^a-z0-9_.\s-]/gi, '_').replace(/\s+/g,'_').toLowerCase();
                 link.href = URL.createObjectURL(blob);
                 link.download = `${safeName}.pdf`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                URL.revokeObjectURL(link.href);
+                document.body.appendChild(link); link.click();
+                document.body.removeChild(link); URL.revokeObjectURL(link.href);
                 showStatusMessage("PDF downloaded.", false);
             } else {
                 const errorText = await response.text();
@@ -331,18 +364,31 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error("PDF Export client error:", error);
         }
     });
-    // Add the export button to the preview pane's controls
     const pdfButtonContainer = previewPaneWrapper.querySelector('.preview-controls');
-    if (pdfButtonContainer) {
-        pdfButtonContainer.appendChild(exportPdfButton);
-    } else { // Fallback if .preview-controls isn't found (should not happen with current HTML)
-        console.warn("Could not find .preview-controls to append PDF export button.");
-        mainControlsContainer.appendChild(exportPdfButton);
+    if (pdfButtonContainer) { pdfButtonContainer.appendChild(exportPdfButton); }
+
+
+    // --- INITIALIZATION LOGIC ---
+    function initializeEditor() {
+        // initialResumeDataJsonString is now globally available from index.html
+        if (typeof window.initialResumeDataJsonString === 'string') {
+            try {
+                resumeData = JSON.parse(window.initialResumeDataJsonString);
+                console.log("Successfully parsed initial resume data from server.");
+            } catch (e) {
+                console.error("Failed to parse initial resume data from server:", e);
+                console.log("Falling back to minimal client-side default data.");
+                resumeData = JSON.parse(JSON.stringify(MINIMAL_CLIENT_FALLBACK_RESUME_DATA)); // Deep copy
+            }
+        } else {
+            console.error("Initial resume data string not found or not a string.");
+            console.log("Falling back to minimal client-side default data.");
+            resumeData = JSON.parse(JSON.stringify(MINIMAL_CLIENT_FALLBACK_RESUME_DATA)); // Deep copy
+        }
+        
+        populateAllFormsFromCurrentData(); 
+        updatePreviewAndHiddenMD();      
     }
 
-    // --- Collapsible Preview Pane Logic --- REMOVED
-    // previewToggleBtn.addEventListener('click', () => { ... });
-
-    // --- Load initial data ---
-    populateFormsFromData();
+    initializeEditor();
 });
