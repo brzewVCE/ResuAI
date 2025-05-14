@@ -1,10 +1,13 @@
 // static/script.js
 document.addEventListener('DOMContentLoaded', () => {
     // --- DOM Elements ---
-    const markdownInput = document.getElementById('markdown-input'); // Hidden
+    const markdownInput = document.getElementById('markdown-input');
     const htmlOutput = document.getElementById('html-output');
     const statusMessageDiv = document.getElementById('status-message');
     const mainControlsContainer = document.getElementById('main-controls');
+    // const mainLayout = document.getElementById('main-layout'); // No longer needed for toggle
+    // const previewToggleBtn = document.getElementById('preview-toggle-btn'); // No longer needed
+    const previewPaneWrapper = document.getElementById('preview-pane-wrapper'); // Still useful for targeting
 
     const nameInput = document.getElementById('resume-name');
     const contactItemsButtonsContainer = document.getElementById('contact-items-buttons');
@@ -28,40 +31,36 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Utility ---
     function uid() { return Date.now().toString(36) + Math.random().toString(36).substr(2, 9); }
 
-    // --- Default Resume Data (used for reset and initial state if resume.md is empty/new) ---
+    // --- Default Resume Data ---
     const defaultResumeData = {
         name: "Bruce Wayne",
         contactItems: [
-            { id: uid(), type: 'phone', label: 'Phone', value: '(+1) 123-456-7890', link: 'tel:+11234567890', icon: 'tabler:phone', noSeparator: true },
-            { id: uid(), type: 'email', label: 'Email', value: 'email@example.com', link: 'mailto:email@example.com', icon: 'tabler:mail', noSeparator: true },
-            { id: uid(), type: 'location', label: 'Location', value: '1234 Abc Street, Example, EX 01234', link: '', icon: 'ic:outline-location-on', noSeparator: false  },
-            { id: uid(), type: 'website', label: 'Website', value: 'example.com', link: 'https://example.com', icon: 'charm:link', noSeparator: false },
-            { id: uid(), type: 'linkedin', label: 'LinkedIn', value: 'linkedin.com/in/example', link: 'https://linkedin.com/in/example', icon: 'tabler:brand-linkedin', noSeparator: false  },
-            { id: uid(), type: 'github', label: 'GitHub', value: 'github.com/example', link: 'https://github.com/example', icon: 'tabler:brand-github', noSeparator: false  }
+            { id: uid(), type: 'phone', label: 'Phone', value: '(+1) 123-456-7890', link: 'tel:+11234567890' },
+            { id: uid(), type: 'email', label: 'Email', value: 'email@example.com', link: 'mailto:email@example.com' },
+            { id: uid(), type: 'location', label: 'Location', value: '1234 Abc Street, Example, EX 01234', link: '' },
+            { id: uid(), type: 'website', label: 'Website', value: 'example.com', link: 'https://example.com' },
+            { id: uid(), type: 'linkedin', label: 'LinkedIn', value: 'linkedin.com/in/example', link: 'https://linkedin.com/in/example' },
+            { id: uid(), type: 'github', label: 'GitHub', value: 'github.com/example', link: 'https://github.com/example' }
         ],
         experience: [
-            { id: uid(), title: "Machine Learning Engineer Intern", company: "Slow Feet Technology", date: "Jul 2021 - Present", bullets: ["Devised a new food-agnostic formulation for fine-grained cross-ingredient meal cooking and subsumed the recent popular works into the proposed scheme (see <sup class=\"crossref-ref\"><a href=\"#ref-P1\">[~P1]</a></sup>)", "Developed a pan for meal cooking which is benefiting the group members' research work"] }
+            { id: uid(), title: "Machine Learning Engineer Intern", company: "Slow Feet Technology", date: "Jul 2021 - Present", bullets: ["Devised a new food-agnostic formulation... (see <sup class=\"crossref-ref\"><a href=\"#ref-P1\">[~P1]</a></sup>)", "Developed a pan for meal cooking..."] }
         ],
         education: [
-            { id: uid(), degree: "M.S. in Computer Science", university: "University of Charles River", location: "Boston, MA", date: "Sep 2021 - Jan 2023", bullets: ["Relevant Coursework: Advanced Algorithms, Machine Learning, AI Ethics.", "Thesis: Efficient Meal Preparation using Deep Reinforcement Learning."] },
+            { id: uid(), degree: "M.S. in Computer Science", university: "University of Charles River", location: "Boston, MA", date: "Sep 2021 - Jan 2023", bullets: ["Relevant Coursework: Advanced Algorithms...", "Thesis: Efficient Meal Prep..."] },
         ],
         skills: [
-            { id: uid(), categoryName: "Programming Languages", entries: "Python (NumPy, Pandas, Scikit-learn), JavaScript (ES6+, React, Node.js), TypeScript, Java, C++" },
-            { id: uid(), categoryName: "Tools & Frameworks", entries: "Git, Docker, Kubernetes, PyTorch, TensorFlow, Keras, Django, Flask, AWS, Azure, $\\LaTeX$" },
+            { id: uid(), categoryName: "Programming Languages", entries: "Python (NumPy, Pandas), JavaScript (React, Node.js), TypeScript, Java, C++" },
+            { id: uid(), categoryName: "Tools & Frameworks", entries: "Git, Docker, Kubernetes, PyTorch, TensorFlow, Django, $\\LaTeX$" },
             { id: uid(), categoryName: "Human Languages", entries: "English (Native), Indonesian (Fluent)" }
         ],
         awards: [
-            { id: uid(), description: "Gold, International Collegiate Catching Fish Contest (ICCFC)", year: "2018" },
-            { id: uid(), description: "First Prize, China National Scholarship for Outstanding Dragons", year: "2017, 2018" }
+            { id: uid(), description: "Gold, ICCFC", year: "2018" }
         ],
         publications: [
-            { id: uid(), refId: "P1", caption: "[~P1]", title: "Eating is All You Need", authors: "<u>Haha Ha</u>, San Zhang", venue: "<em>Conference on Neural Information Processing Systems (NeurIPS), 2099</em>" },
+            { id: uid(), refId: "P1", caption: "[~P1]", title: "Eating is All You Need", authors: "<u>Haha Ha</u>, San Zhang", venue: "<em>NeurIPS, 2099</em>" },
         ]
     };
-    // Initialize resumeData. Attempt to parse from hidden textarea if it has content,
-    // otherwise use a deep copy of the default. Parsing MD to JSON is complex and not implemented here.
-    // For simplicity, we'll always start with default and let user save to resume.md
-    let resumeData = JSON.parse(JSON.stringify(defaultResumeData)); // Deep copy
+    let resumeData = JSON.parse(JSON.stringify(defaultResumeData));
 
     // --- Marked.js Setup ---
     marked.setOptions({ gfm: true, breaks: false, pedantic: false, sanitize: false });
@@ -74,38 +73,40 @@ document.addEventListener('DOMContentLoaded', () => {
         if (window.renderMathInElement) {
             renderMathInElement(htmlOutput, { delimiters: [{left:"$$",right:"$$",display:true},{left:"$",right:"$",display:false},{left:"\\(",right:"\\)",display:false},{left:"\\[",right:"\\]",display:true}] });
         }
-        if (window.Iconify) window.Iconify.scan(htmlOutput); // Re-scan for Iconify icons
+        if (window.Iconify) window.Iconify.scan(htmlOutput);
     }
 
     // --- Markdown Generation ---
     function generateMarkdownFromData() {
         let md = "";
         md += `# ${resumeData.name || "Your Name"}\n\n`;
-
         const contactItemsForHeader = resumeData.contactItems.filter(item => item.value && item.value.trim() !== '');
-        const lines = [];
-        let currentLine = [];
-        let lineItemCount = 0;
-        const maxItemsPerLine = 3; // Adjust as needed
-
-        contactItemsForHeader.forEach(item => {
-            currentLine.push(item);
-            lineItemCount++;
-            if (lineItemCount >= maxItemsPerLine || item.noSeparator) {
-                lines.push([...currentLine]);
-                currentLine = [];
-                lineItemCount = 0;
+        const getIconForContact = (item) => {
+            const type = item.type ? item.type.toLowerCase() : '';
+            const label = item.label ? item.label.toLowerCase() : '';
+            if (type.includes('phone') || label.includes('phone') || label.includes('tel')) return 'tabler:phone';
+            if (type.includes('email') || label.includes('mail')) return 'tabler:mail';
+            if (type.includes('website') || label.includes('site') || label.includes('port')) return 'charm:link';
+            if (type.includes('location') || label.includes('address') || label.includes('loc')) return 'ic:outline-location-on';
+            if (type.includes('linkedin') || label.includes('linkedin')) return 'tabler:brand-linkedin';
+            if (type.includes('github') || label.includes('github') || label.includes('git')) return 'tabler:brand-github';
+            return 'mdi:link-variant';
+        };
+        const lines = []; let currentLine = []; const MAX_ITEMS_PER_LINE = 3;
+        for (let i = 0; i < contactItemsForHeader.length; i++) {
+            currentLine.push(contactItemsForHeader[i]);
+            if (currentLine.length >= MAX_ITEMS_PER_LINE || i === contactItemsForHeader.length - 1) {
+                lines.push([...currentLine]); currentLine = [];
             }
-        });
-        if (currentLine.length > 0) lines.push([...currentLine]); // Add any remaining items
-
+        }
+        if (currentLine.length > 0) lines.push([...currentLine]);
         lines.forEach(lineItems => {
             if (lineItems.length > 0) {
                 md += '<div class="resume-header">\n';
                 lineItems.forEach((item, index) => {
-                    // Determine if this item is the last one in *its* logical group before a separator, or last in line
-                    let isLastEffectively = item.noSeparator || (index === lineItems.length - 1);
-                    md += `  <span class="resume-header-item${isLastEffectively ? ' no-separator' : ''}"><span class="iconify" data-icon="${item.icon || 'mdi:link-variant'}"></span> ${item.link ? `<a href="${item.link}">${item.value}</a>` : item.value}</span>\n`;
+                    const icon = getIconForContact(item);
+                    const isEffectivelyLast = (index === lineItems.length - 1);
+                    md += `  <span class="resume-header-item${isEffectivelyLast ? ' no-separator' : ''}"><span class="iconify" data-icon="${icon}"></span> ${item.link ? `<a href="${item.link}">${item.value}</a>` : item.value}</span>\n`;
                 });
                 md += '</div>\n';
             }
@@ -132,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
             md += "## Skills\n\n";
             resumeData.skills.forEach(skillCategory => {
                 if (skillCategory.categoryName && skillCategory.categoryName.trim() && skillCategory.entries && skillCategory.entries.trim()) {
-                    md += `**${skillCategory.categoryName.trim()}:** ${skillCategory.entries.trim().replace(/\n/g, '  \n')}\n\n`; // GFM line breaks
+                    md += `**${skillCategory.categoryName.trim()}:** ${skillCategory.entries.trim().replace(/\n/g, '  \n')}\n\n`;
                 }
             });
         }
@@ -153,71 +154,43 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- UI Rendering & Event Handling ---
-    function createFormGroup(labelText, inputElement) {
-        const group = document.createElement('div');
-        group.className = 'form-group';
-        const label = document.createElement('label');
-        label.textContent = labelText;
-        group.appendChild(label);
-        group.appendChild(inputElement);
-        return group;
+    function createFormGroup(labelText, inputElement) { /* ... same ... */
+        const group = document.createElement('div'); group.className = 'form-group';
+        const label = document.createElement('label'); label.textContent = labelText;
+        group.appendChild(label); group.appendChild(inputElement); return group;
     }
-    function createInputElement(type, value, placeholder, className, dataAttrs = {}, onChangeCallback) {
+    function createInputElement(type, value, placeholder, className, dataAttrs = {}, onChangeCallback) { /* ... same ... */
         const input = document.createElement(type === 'textarea' ? 'textarea' : 'input');
-        if (type !== 'textarea') input.type = type;
-        input.className = className;
-        input.value = value || '';
-        if (placeholder) input.placeholder = placeholder;
+        if (type !== 'textarea') input.type = type; input.className = className;
+        input.value = value || ''; if (placeholder) input.placeholder = placeholder;
         Object.entries(dataAttrs).forEach(([key, val]) => input.dataset[key] = val);
         if (onChangeCallback) input.addEventListener('change', onChangeCallback);
-        else input.addEventListener('change', handleGenericInputChange); // Default handler
-        return input;
+        else input.addEventListener('change', handleGenericInputChange); return input;
     }
-    function createButton(text, className, onClick, title = '') {
-        const btn = document.createElement('button');
-        btn.textContent = text;
-        btn.className = className;
-        if (title) btn.title = title;
-        btn.addEventListener('click', onClick);
-        return btn;
+    function createButton(text, className, onClick, title = '') { /* ... same ... */
+        const btn = document.createElement('button'); btn.textContent = text;
+        btn.className = className; if (title) btn.title = title;
+        btn.addEventListener('click', onClick); return btn;
     }
-    function handleGenericInputChange(event) {
+    function handleGenericInputChange(event) { /* ... same ... */
         const path = event.target.dataset.path;
         const value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
-        let current = resumeData;
-        const parts = path.split('.');
+        let current = resumeData; const parts = path.split('.');
         try {
-            for (let i = 0; i < parts.length - 1; i++) {
-                current = current[parts[i]];
-            }
+            for (let i = 0; i < parts.length - 1; i++) { current = current[parts[i]]; }
             current[parts[parts.length - 1]] = value;
         } catch (e) { console.error("Error updating data for path:", path, e); }
         updateAll();
     }
 
-    // Contact Info
-    function renderContactItems() {
+    function renderContactItems() { /* ... same as previous (with no icon input / noSep checkbox) ... */
         contactItemsContainer.innerHTML = '';
         resumeData.contactItems.forEach((item, index) => {
-            const itemDiv = document.createElement('div');
-            itemDiv.className = 'contact-item-row';
-            itemDiv.dataset.id = item.id;
-
+            const itemDiv = document.createElement('div'); itemDiv.className = 'contact-item-row'; itemDiv.dataset.id = item.id;
             itemDiv.appendChild(createFormGroup('Label:', createInputElement('text', item.label, 'Label (e.g., Phone)', `contact-label`, { path: `contactItems.${index}.label` })));
             itemDiv.appendChild(createFormGroup('Value:', createInputElement('text', item.value, 'Value (e.g., 555-1234)', `contact-value`, { path: `contactItems.${index}.value` })));
             itemDiv.appendChild(createFormGroup('Link (Optional):', createInputElement('text', item.link, 'https:// or mailto:', `contact-link`, { path: `contactItems.${index}.link` })));
-            itemDiv.appendChild(createFormGroup('Icon (Iconify):', createInputElement('text', item.icon, 'tabler:phone', `contact-icon`, { path: `contactItems.${index}.icon` })));
-            
-            const actionsDiv = document.createElement('div');
-            actionsDiv.className = 'contact-item-actions';
-            const noSepCheckbox = createInputElement('checkbox', '', '', `contact-nosep`);
-            noSepCheckbox.checked = item.noSeparator || false;
-            noSepCheckbox.dataset.path = `contactItems.${index}.noSeparator`; // Generic handler will pick this up
-            const noSepLabel = document.createElement('label');
-            noSepLabel.textContent = "End Line"; noSepLabel.style.fontWeight='normal'; noSepLabel.style.fontSize='0.8em'; noSepLabel.style.cursor='pointer';
-            noSepLabel.htmlFor = noSepCheckbox.id = `contact-nosep-${item.id}`;
-            actionsDiv.appendChild(noSepCheckbox);
-            actionsDiv.appendChild(noSepLabel);
+            const actionsDiv = document.createElement('div'); actionsDiv.className = 'contact-item-actions';
             actionsDiv.appendChild(createButton("Remove", "remove-btn", () => {
                 resumeData.contactItems = resumeData.contactItems.filter(ci => ci.id !== item.id);
                 renderContactItems(); updateAll();
@@ -226,58 +199,44 @@ document.addEventListener('DOMContentLoaded', () => {
             contactItemsContainer.appendChild(itemDiv);
         });
     }
-    const contactTypes = [
-        { type: 'phone', label: 'Phone', icon: 'tabler:phone', defaultLinkPrefix: 'tel:', noSeparatorDefault: true },
-        { type: 'email', label: 'Email', icon: 'tabler:mail', defaultLinkPrefix: 'mailto:', noSeparatorDefault: true },
-        { type: 'website', label: 'Website', icon: 'charm:link', defaultLinkPrefix: 'https://' },
-        { type: 'location', label: 'Location', icon: 'ic:outline-location-on' },
-        { type: 'linkedin', label: 'LinkedIn', icon: 'tabler:brand-linkedin', defaultLinkPrefix: 'https://linkedin.com/in/' },
-        { type: 'github', label: 'GitHub', icon: 'tabler:brand-github', defaultLinkPrefix: 'https://github.com/' }
+    const contactTypes = [ /* ... same ... */
+        { type: 'phone', label: 'Phone', defaultIcon: 'tabler:phone', defaultLinkPrefix: 'tel:'},
+        { type: 'email', label: 'Email', defaultIcon: 'tabler:mail', defaultLinkPrefix: 'mailto:'},
+        { type: 'website', label: 'Website', defaultIcon: 'charm:link', defaultLinkPrefix: 'https://' },
+        { type: 'location', label: 'Location', defaultIcon: 'ic:outline-location-on' },
+        { type: 'linkedin', label: 'LinkedIn', defaultIcon: 'tabler:brand-linkedin', defaultLinkPrefix: 'https://linkedin.com/in/' },
+        { type: 'github', label: 'GitHub', defaultIcon: 'tabler:brand-github', defaultLinkPrefix: 'https://github.com/' }
     ];
-    contactTypes.forEach(contact => {
+    contactItemsButtonsContainer.innerHTML = '';
+    contactTypes.forEach(contact => { /* ... same ... */
         contactItemsButtonsContainer.appendChild(createButton(`Add ${contact.label}`, `add-${contact.type}-btn`, () => {
-            resumeData.contactItems.push({ id: uid(), type: contact.type, label: contact.label, value: '', link: contact.defaultLinkPrefix || '', icon: contact.icon, noSeparator: contact.noSeparatorDefault || false });
+            resumeData.contactItems.push({ id: uid(), type: contact.type, label: contact.label, value: '', link: contact.defaultLinkPrefix || '' });
             renderContactItems(); updateAll();
         }));
     });
 
-    // Reusable renderer for list-based sections (Experience, Education, Awards, Publications)
-    function renderListEntry(item, index, sectionName, fieldsConfig, bulletsConfig) {
-        const entryDiv = document.createElement('div');
-        entryDiv.className = `form-group ${sectionName}-entry`;
+    function renderListEntry(item, index, sectionName, fieldsConfig, bulletsConfig) { /* ... same ... */
+        const entryDiv = document.createElement('div'); entryDiv.className = `form-group ${sectionName}-entry`;
+        entryDiv.style.border = "1px solid #f0f0f0"; entryDiv.style.padding = "10px"; entryDiv.style.marginBottom = "10px"; entryDiv.style.borderRadius="3px";
         entryDiv.dataset.id = item.id;
-
-        fieldsConfig.forEach(field => {
-            entryDiv.appendChild(createFormGroup(field.label + ':', createInputElement(field.type || 'text', item[field.key], field.placeholder, `${sectionName}-${field.key}`, { path: `${sectionName}.${index}.${field.key}` })));
-        });
-
+        fieldsConfig.forEach(field => { entryDiv.appendChild(createFormGroup(field.label + ':', createInputElement(field.type || 'text', item[field.key], field.placeholder, `${sectionName}-${field.key}`, { path: `${sectionName}.${index}.${field.key}` }))); });
         if (bulletsConfig) {
-            const bulletsLabel = document.createElement('label');
-            bulletsLabel.textContent = bulletsConfig.label;
-            entryDiv.appendChild(bulletsLabel);
-            const bulletsUl = document.createElement('ul');
-            bulletsUl.className = 'bullet-list';
+            const bulletsLabel = document.createElement('label'); bulletsLabel.textContent = bulletsConfig.label; bulletsLabel.style.fontWeight='bold'; entryDiv.appendChild(bulletsLabel);
+            const bulletsUl = document.createElement('ul'); bulletsUl.className = 'bullet-list';
             (item[bulletsConfig.key] || []).forEach((bullet, bIndex) => {
                 const li = document.createElement('li');
                 li.appendChild(createInputElement('text', bullet, bulletsConfig.placeholder, `${sectionName}-bullet`, { path: `${sectionName}.${index}.${bulletsConfig.key}.${bIndex}` }));
-                li.appendChild(createButton("X", "remove-btn", () => {
-                    item[bulletsConfig.key].splice(bIndex, 1);
-                    populateFormsFromData(); // Re-render all forms to refresh indices/paths
-                }));
+                li.appendChild(createButton("X", "remove-btn", () => { item[bulletsConfig.key].splice(bIndex, 1); populateFormsFromData(); }));
                 bulletsUl.appendChild(li);
             });
             entryDiv.appendChild(bulletsUl);
             entryDiv.appendChild(createButton(bulletsConfig.addBtnText, `add-bullet-${sectionName}`, () => {
-                if (!item[bulletsConfig.key]) item[bulletsConfig.key] = [];
-                item[bulletsConfig.key].push("");
-                populateFormsFromData();
+                if (!item[bulletsConfig.key]) item[bulletsConfig.key] = []; item[bulletsConfig.key].push(""); populateFormsFromData();
             }));
         }
         entryDiv.appendChild(createButton(`Remove ${fieldsConfig[0].label}`, "remove-btn", () => {
-            resumeData[sectionName] = resumeData[sectionName].filter(e => e.id !== item.id);
-            populateFormsFromData();
+            resumeData[sectionName] = resumeData[sectionName].filter(e => e.id !== item.id); populateFormsFromData();
         }));
-        entryDiv.appendChild(document.createElement('hr'));
         return entryDiv;
     }
 
@@ -291,18 +250,14 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderEducationForms() { educationEntriesContainer.innerHTML = ''; resumeData.education.forEach((item, i) => educationEntriesContainer.appendChild(renderListEntry(item, i, 'education', educationFields, educationBullets)));}
     addEducationBtn.addEventListener('click', () => { resumeData.education.push({ id: uid(), degree: "", university: "", location: "", date: "", bullets: [] }); populateFormsFromData(); });
     
-    // Skills (Dynamic Categories)
-    function renderSkillForms() {
+    function renderSkillForms() { /* ... same ... */
         skillCategoriesContainer.innerHTML = '';
         resumeData.skills.forEach((category, index) => {
-            const catDiv = document.createElement('div');
-            catDiv.className = 'skill-category-entry';
-            catDiv.dataset.id = category.id;
+            const catDiv = document.createElement('div'); catDiv.className = 'skill-category-entry'; catDiv.dataset.id = category.id;
             catDiv.appendChild(createFormGroup('Category Name:', createInputElement('text', category.categoryName, 'e.g., Programming Languages', `skill-category-name`, { path: `skills.${index}.categoryName` })));
-            catDiv.appendChild(createFormGroup('Skills (comma-separated or one per line):', createInputElement('textarea', category.entries, 'Python, Java, SQL...', `skill-category-entries`, { path: `skills.${index}.entries` })));
+            catDiv.appendChild(createFormGroup('Skills (one per line for GFM line breaks, or comma-separated):', createInputElement('textarea', category.entries, 'Python, Java, SQL...', `skill-category-entries`, { path: `skills.${index}.entries` })));
             catDiv.appendChild(createButton("Remove Category", "remove-btn", () => {
-                resumeData.skills = resumeData.skills.filter(sc => sc.id !== category.id);
-                renderSkillForms(); updateAll();
+                resumeData.skills = resumeData.skills.filter(sc => sc.id !== category.id); renderSkillForms(); updateAll();
             }));
             skillCategoriesContainer.appendChild(catDiv);
         });
@@ -317,43 +272,39 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderPublicationForms() { publicationEntriesContainer.innerHTML = ''; resumeData.publications.forEach((item, i) => publicationEntriesContainer.appendChild(renderListEntry(item, i, 'publications', publicationFields, null)));}
     addPublicationBtn.addEventListener('click', () => { resumeData.publications.push({ id: uid(), refId: `P${resumeData.publications.length+1}`, caption: `[~P${resumeData.publications.length+1}]`, title: "", authors: "", venue: "" }); populateFormsFromData(); });
 
-    // --- Initial Form Population ---
-    function populateFormsFromData() {
-        nameInput.value = resumeData.name;
-        nameInput.dataset.path = "name"; // For generic handler
-        renderContactItems();
-        renderExperienceForms();
-        renderEducationForms();
-        renderSkillForms();
-        renderAwardForms();
-        renderPublicationForms();
+    function populateFormsFromData() { /* ... same ... */
+        nameInput.value = resumeData.name; nameInput.dataset.path = "name"; 
+        renderContactItems(); renderExperienceForms(); renderEducationForms();
+        renderSkillForms(); renderAwardForms(); renderPublicationForms();
         updateAll();
     }
-    nameInput.addEventListener('change', handleGenericInputChange); // Name is a single field
+    nameInput.addEventListener('change', handleGenericInputChange);
 
-    // --- Main Controls (Save, Reset, Export PDF) & Status ---
-    function showStatusMessage(message, isError = false) {
-        statusMessageDiv.textContent = message;
-        statusMessageDiv.style.color = isError ? '#dc3545' : '#28a745';
+    function showStatusMessage(message, isError = false) { /* ... same ... */
+        statusMessageDiv.textContent = message; statusMessageDiv.style.color = isError ? 'rgb(220, 53, 69)' : 'rgb(40, 167, 69)';
         setTimeout(() => statusMessageDiv.textContent = '', 5000);
     }
-    const saveButton = createButton("Save Resume", "save-btn", async () => { /* ... as before ... */ });
-    saveButton.style.backgroundColor = '#28a745'; saveButton.style.color = 'white';
-    const resetButton = createButton("Reset Form", "reset-btn", () => {
-        if (confirm("Are you sure you want to reset all form data to the default Bruce Wayne template? Unsaved changes will be lost.")) {
-            resumeData = JSON.parse(JSON.stringify(defaultResumeData)); // Deep copy
+    const saveButton = createButton("Save Resume", "save-md-btn", async () => { /* ... same ... */
+        const markdownToSave = generateMarkdownFromData(); const formData = new FormData();
+        formData.append('markdown_content', markdownToSave);
+        try {
+            const response = await fetch('/save_markdown', { method: 'POST', body: formData });
+            const result = await response.json();
+            showStatusMessage(result.message, !(response.ok && result.status === 'success'));
+        } catch (error) { showStatusMessage('Error saving resume.', true); console.error("Save error:", error); }
+    });
+    const resetButton = createButton("Reset Form", "reset-md-btn", () => { /* ... same ... */
+        if (confirm("Are you sure you want to reset all form data to the default template? Unsaved changes will be lost.")) {
+            resumeData = JSON.parse(JSON.stringify(defaultResumeData));
             populateFormsFromData();
             showStatusMessage("Form reset to default template. Click 'Save Resume' to persist this version.");
         }
     });
-    resetButton.style.backgroundColor = '#dc3545'; resetButton.style.color = 'white';
     mainControlsContainer.append(saveButton, resetButton);
 
-    const exportPdfButton = createButton("Export as PDF", "export-pdf-btn", async () => { /* ... as before ... */ });
-    exportPdfButton.style.backgroundColor = '#007bff'; exportPdfButton.style.color = 'white';
-    document.querySelector('.preview-pane .preview-controls').appendChild(exportPdfButton);
-    // (Copy existing export PDF logic for the click handler)
-    exportPdfButton.addEventListener('click', async () => {
+    // --- PDF Export Button --- RESTORED
+    const exportPdfButton = createButton("Export as PDF", "export-pdf-btn", async () => {
+        showStatusMessage("Generating PDF...", false); // Indicate processing
         const htmlContentToExport = document.getElementById('html-output').innerHTML;
         const formData = new FormData();
         formData.append('html_content', htmlContentToExport);
@@ -362,18 +313,36 @@ document.addEventListener('DOMContentLoaded', () => {
             if (response.ok) {
                 const blob = await response.blob();
                 const link = document.createElement('a');
+                const safeName = (resumeData.name || "resume").replace(/[^a-z0-9_.-]/gi, '_').toLowerCase();
                 link.href = URL.createObjectURL(blob);
-                link.download = 'resume.pdf';
+                link.download = `${safeName}.pdf`;
                 document.body.appendChild(link);
                 link.click();
-                document.body.removeChild(link); URL.revokeObjectURL(link.href);
-            } else { showStatusMessage('Error exporting PDF: ' + await response.text(), true); }
-        } catch (error) { showStatusMessage('Client-side error during PDF export.', true); }
+                document.body.removeChild(link);
+                URL.revokeObjectURL(link.href);
+                showStatusMessage("PDF downloaded.", false);
+            } else {
+                const errorText = await response.text();
+                showStatusMessage('Error exporting PDF: ' + errorText, true);
+                console.error('PDF Export Error:', errorText);
+            }
+        } catch (error) {
+            showStatusMessage('Client-side error during PDF export.', true);
+            console.error("PDF Export client error:", error);
+        }
     });
+    // Add the export button to the preview pane's controls
+    const pdfButtonContainer = previewPaneWrapper.querySelector('.preview-controls');
+    if (pdfButtonContainer) {
+        pdfButtonContainer.appendChild(exportPdfButton);
+    } else { // Fallback if .preview-controls isn't found (should not happen with current HTML)
+        console.warn("Could not find .preview-controls to append PDF export button.");
+        mainControlsContainer.appendChild(exportPdfButton);
+    }
+
+    // --- Collapsible Preview Pane Logic --- REMOVED
+    // previewToggleBtn.addEventListener('click', () => { ... });
 
     // --- Load initial data ---
-    // If markdownInput.value (from resume.md) is not empty, you could *try* to parse it.
-    // For this example, we always start with `defaultResumeData` for simplicity,
-    // assuming the user will save their work to `resume.md` via the "Save Resume" button.
     populateFormsFromData();
 });

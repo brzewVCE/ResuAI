@@ -11,251 +11,93 @@
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/auto-render.min.js"
         onload="renderMathInElement(document.body);"></script>
-    <!-- Inline styles for the form UI, can be moved to style.css -->
-    <style>
-        .form-editor-pane {
-            padding: 15px;
-            border: 1px solid #ddd;
-            background-color: #f9f9f9;
-            margin-bottom: 20px;
-            border-radius: 4px;
-        }
-        .form-editor-pane > h3 { /* Direct child h3 */
-            margin-top: 0;
-            color: #3498db;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 5px;
-            text-align: center;
-        }
-        .controls-header {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
-            margin-top: 10px;
-        }
-        .form-section {
-            margin-bottom: 20px;
-            padding: 15px;
-            border: 1px solid #e0e0e0;
-            background-color: #fff;
-            border-radius: 3px;
-        }
-        .form-section > h4 { /* Direct child h4 */
-            margin-top: 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: #2c3e50;
-            padding-bottom: 8px;
-            border-bottom: 1px dotted #ccc;
-            margin-bottom: 15px;
-        }
-        .form-group {
-            margin-bottom: 12px;
-            padding-bottom: 10px;
-            border-bottom: 1px dashed #f0f0f0;
-        }
-        .form-group:last-child {
-            border-bottom: none;
-            padding-bottom: 0;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            font-size: 0.9em;
-            color: #555;
-        }
-        .form-group input[type="text"],
-        .form-group input[type="url"],
-        .form-group input[type="email"],
-        .form-group input[type="tel"],
-        .form-group textarea,
-        .form-group select {
-            width: calc(100% - 16px); /* Account for padding and border */
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 3px;
-            font-size: 0.95em;
-            box-sizing: border-box;
-        }
-        .form-group textarea {
-            min-height: 70px;
-            resize: vertical;
-        }
-        .form-editor-pane button, .form-section button, .controls-header button { /* Target all buttons */
-            padding: 6px 12px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-            margin-right: 5px;
-            margin-top: 5px;
-            font-size: 0.9em;
-            transition: background-color 0.2s ease;
-        }
-        .form-editor-pane button:hover, .form-section button:hover, .controls-header button:hover {
-            opacity: 0.9;
-        }
-        .form-editor-pane button.remove-btn, .form-section button.remove-btn {
-            background-color: #dc3545;
-            font-size: 0.8em;
-            padding: 4px 8px;
-        }
-        .bullet-list {
-            list-style: none;
-            padding-left: 0;
-        }
-        .bullet-list li {
-            display: flex;
-            align-items: center;
-            margin-bottom: 5px;
-        }
-        .bullet-list input[type="text"] { /* Target specific input type */
-            flex-grow: 1;
-            margin-right: 8px;
-        }
-        .editor-pane { display: none !important; } /* Hide original Markdown textarea view */
-
-        .contact-item-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Responsive columns */
-            gap: 10px;
-            align-items: end; /* Align form elements to their baseline */
-            padding: 10px;
-            border: 1px solid #f0f0f0;
-            border-radius: 3px;
-            margin-bottom: 10px;
-            background-color: #fdfdfd;
-        }
-         .contact-item-row .form-group { /* Remove bottom border for groups inside a row */
-            border-bottom: none;
-            padding-bottom: 0;
-            margin-bottom: 0;
-        }
-        .contact-item-actions {
-            display: flex;
-            align-items: center; /* Vertically align checkbox and remove button */
-            gap: 10px;
-            padding-top: 20px; /* Align with input fields that have labels */
-        }
-        .contact-item-actions label { margin-bottom: 0; } /* For "No Sep." label */
-        #contact-items-buttons button { font-size: 0.85em; padding: 5px 8px; margin-bottom: 5px; }
-
-        /* Style for skill category entries */
-        .skill-category-entry {
-            padding: 10px;
-            border: 1px solid #e9e9e9;
-            margin-bottom:10px;
-            border-radius:3px;
-            background-color: #fdfdfd;
-        }
-    </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container"> <!-- Main page container -->
         <header>
             <h1>Resume Builder</h1>
-            <p><em>Structured editing with live Markdown preview.</em></p>
+            <p>Edit your resume using the form below and see a live preview.</p>
         </header>
 
-        <section class="form-editor-pane">
-            <h3>Edit Your Resume</h3>
-            <div class="controls-header" id="main-controls">
-                <!-- Save and Reset buttons will be dynamically added here -->
+        <div class="main-layout" id="main-layout">
+            <!-- Form Editor Pane -->
+            <div class="form-editor-wrapper">
+                <h3>Edit Your Resume</h3>
+                <div class="controls-header" id="main-controls">
+                    <!-- Save and Reset buttons -->
+                </div>
+                <div id="status-message" style="min-height: 1.2em;"></div>
+
+                <div id="resume-form-container">
+                    <!-- Personal Info Section -->
+                    <div class="form-section" id="personal-info-form">
+                        <h4>Personal Information</h4>
+                        <div class="form-group">
+                            <label for="resume-name">Full Name:</label>
+                            <input type="text" id="resume-name" data-path="name" placeholder="e.g., Bruce Wayne">
+                        </div>
+                        <label style="font-weight:bold; font-size:0.95em; margin-bottom:10px; display:block;">Contact Details:</label>
+                        <div id="contact-items-buttons" style="margin-bottom: 15px; display:flex; flex-wrap:wrap; gap:5px;"></div>
+                        <div id="contact-items-container"></div>
+                    </div>
+
+                    <!-- Experience Section -->
+                    <div class="form-section" id="experience-form">
+                        <h4>Experience <button id="add-experience-btn" title="Add a new experience entry">Add Experience</button></h4>
+                        <div id="experience-entries-container"></div>
+                    </div>
+
+                    <!-- Education Section -->
+                    <div class="form-section" id="education-form">
+                        <h4>Education <button id="add-education-btn" title="Add a new education entry">Add Education</button></h4>
+                        <div id="education-entries-container"></div>
+                    </div>
+
+                    <!-- Skills Section -->
+                    <div class="form-section" id="skills-form">
+                        <h4>Skills <button id="add-skill-category-btn" title="Add a new skill category">Add Skill Category</button></h4>
+                        <div id="skill-categories-container"></div>
+                    </div>
+
+                    <!-- Awards and Honors Section -->
+                    <div class="form-section" id="awards-form">
+                        <h4>Awards and Honors <button id="add-award-btn" title="Add an award or honor">Add Award</button></h4>
+                        <div id="award-entries-container"></div>
+                    </div>
+
+                    <!-- Publications Section -->
+                    <div class="form-section" id="publications-form">
+                        <h4>Publications <button id="add-publication-btn" title="Add a publication">Add Publication</button></h4>
+                        <div id="publication-entries-container"></div>
+                    </div>
+                </div>
             </div>
-            <div id="status-message" style="text-align: center; margin-bottom: 15px; font-weight: bold; min-height: 1.2em;"></div>
 
-            <div id="resume-form-container">
-                <!-- Personal Info Section -->
-                <div class="form-section" id="personal-info-form">
-                    <h4>Personal Information</h4>
-                    <div class="form-group">
-                        <label for="resume-name">Full Name:</label>
-                        <input type="text" id="resume-name" data-path="name" placeholder="e.g., Bruce Wayne">
-                    </div>
-                    <label style="font-weight:bold; font-size:0.95em; margin-bottom:10px; display:block;">Contact Details:</label>
-                    <div id="contact-items-buttons" style="margin-bottom: 15px; display:flex; flex-wrap:wrap; gap:5px;">
-                        <!-- Specific "Add Contact" buttons will be dynamically added here -->
-                    </div>
-                    <div id="contact-items-container">
-                        <!-- Dynamic contact items will be rendered here -->
-                    </div>
+            <!-- Preview Pane (No longer collapsible, just side-by-side) -->
+            <div class="preview-pane-wrapper" id="preview-pane-wrapper">
+                <div class="preview-controls">
+                    <h2>Resume Preview</h2>
+                    <!-- Export PDF button will be added here -->
                 </div>
-
-                <!-- Experience Section -->
-                <div class="form-section" id="experience-form">
-                    <h4>Experience <button id="add-experience-btn" title="Add a new experience entry">Add Experience</button></h4>
-                    <div id="experience-entries-container">
-                        <!-- Dynamic experience entries will be rendered here -->
-                    </div>
+                <div id="html-output" class="markdown-body">
+                    <!-- Rendered HTML -->
                 </div>
-
-                <!-- Education Section -->
-                <div class="form-section" id="education-form">
-                    <h4>Education <button id="add-education-btn" title="Add a new education entry">Add Education</button></h4>
-                    <div id="education-entries-container">
-                        <!-- Dynamic education entries will be rendered here -->
-                    </div>
-                </div>
-
-                <!-- Skills Section -->
-                <div class="form-section" id="skills-form">
-                    <h4>Skills <button id="add-skill-category-btn" title="Add a new skill category">Add Skill Category</button></h4>
-                    <div id="skill-categories-container">
-                        <!-- Dynamic skill categories and their entries will be rendered here -->
-                    </div>
-                </div>
-
-                <!-- Awards and Honors Section -->
-                <div class="form-section" id="awards-form">
-                    <h4>Awards and Honors <button id="add-award-btn" title="Add an award or honor">Add Award</button></h4>
-                    <div id="award-entries-container">
-                        <!-- Dynamic award entries will be rendered here -->
-                    </div>
-                </div>
-
-                <!-- Publications Section -->
-                <div class="form-section" id="publications-form">
-                    <h4>Publications <button id="add-publication-btn" title="Add a publication">Add Publication</button></h4>
-                    <div id="publication-entries-container">
-                        <!-- Dynamic publication entries will be rendered here -->
-                    </div>
-                </div>
-
             </div>
-        </section>
+        </div>
 
         <!-- Hidden textarea for storing the generated Markdown -->
         <textarea id="markdown-input" style="display:none;">{{- initial_markdown | safe -}}</textarea>
 
-        <main class="editor-layout">
-            <!-- Preview Pane (original .editor-pane is hidden by CSS) -->
-            <section class="preview-pane" style="flex: 1 1 100%; min-width:0;">
-                <div class="preview-controls" style="display:flex; justify-content:space-between; align-items:center;">
-                    <h2>Resume Preview</h2>
-                    <!-- Export PDF button will be dynamically added here -->
-                </div>
-                <div id="html-output" class="markdown-body">
-                    <!-- Rendered HTML will appear here -->
-                </div>
-            </section>
-        </main>
-
         <hr class="separator">
         <article class="lorem-content">
-            <h2>Sample Content Area (Not part of Resume Preview)</h2>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <h2>Sample Content Area</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
         </article>
 
         <footer>
             <p>© 2023 Your Awesome Editor</p>
         </footer>
-    </div>
-
+    </div> <!-- End .container -->
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

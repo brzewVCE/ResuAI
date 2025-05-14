@@ -81,7 +81,6 @@ def export_pdf():
         <style>
             @page {{
                 size: A4;
-                margin: 10mm; 
             }}
         </style>
     </head>
