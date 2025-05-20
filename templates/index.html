@@ -12,99 +12,87 @@
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/auto-render.min.js"
         onload="renderMathInElement(document.body);"></script>
     
-    <!-- Pass initial resume data JSON string from Flask to JavaScript -->
     <script>
         window.initialResumeDataJsonString = {{ initial_resume_json_str | tojson }};
     </script>
 </head>
 <body>
-    <div class="container"> <!-- Main page container -->
+    <div class="container"> 
         <header>
             <h1>Resume Builder</h1>
             <p>Edit your resume using the form below and see a live preview. Your data is saved in <code>resume.json</code>.</p>
         </header>
 
         <div class="main-layout" id="main-layout">
-            <!-- Form Editor Pane -->
             <div class="form-editor-wrapper">
                 <h3>Edit Your Resume</h3>
                 <div class="controls-header" id="main-controls">
-                    <!-- Save and Reset buttons will be added here by script.js -->
                 </div>
-                <div id="status-message" style="min-height: 1.2em;"></div>
+                <div id="status-message"></div>
 
                 <div id="resume-form-container">
-                    <!-- Personal Info Section -->
                     <div class="form-section" id="personal-info-form">
                         <h4>Personal Information</h4>
                         <div class="form-group">
                             <label for="resume-name">Full Name:</label>
                             <input type="text" id="resume-name" data-path="name" placeholder="e.g., Bruce Wayne">
                         </div>
+                        
+                        <div class="form-group">
+                            <label for="profile-photo-upload">Profile Picture:</label>
+                            <img id="profile-photo-preview" src="static/batman.png" alt="Profile Preview">
+                            <input type="file" id="profile-photo-upload" name="profile_photo" accept="image/*">
+                            <small>Changes are saved automatically upon selection.</small>
+                        </div>
+
                         <label style="font-weight:bold; font-size:0.95em; margin-bottom:10px; display:block;">Contact Details:</label>
                         <div id="contact-items-buttons" style="margin-bottom: 15px; display:flex; flex-wrap:wrap; gap:5px;">
-                            <!-- Add Contact type buttons will be added here by script.js -->
                         </div>
                         <div id="contact-items-container">
-                            <!-- Contact item forms will be added here by script.js -->
                         </div>
                     </div>
 
-                    <!-- Experience Section -->
                     <div class="form-section" id="experience-form">
                         <h4>Experience <button id="add-experience-btn" title="Add a new experience entry">Add Experience</button></h4>
                         <div id="experience-entries-container">
-                            <!-- Experience entry forms will be added here by script.js -->
                         </div>
                     </div>
 
-                    <!-- Education Section -->
                     <div class="form-section" id="education-form">
                         <h4>Education <button id="add-education-btn" title="Add a new education entry">Add Education</button></h4>
                         <div id="education-entries-container">
-                            <!-- Education entry forms will be added here by script.js -->
                         </div>
                     </div>
 
-                    <!-- Skills Section -->
                     <div class="form-section" id="skills-form">
                         <h4>Skills <button id="add-skill-category-btn" title="Add a new skill category">Add Skill Category</button></h4>
                         <div id="skill-categories-container">
-                            <!-- Skill category forms will be added here by script.js -->
                         </div>
                     </div>
 
-                    <!-- Awards and Honors Section -->
                     <div class="form-section" id="awards-form">
                         <h4>Awards and Honors <button id="add-award-btn" title="Add an award or honor">Add Award</button></h4>
                         <div id="award-entries-container">
-                            <!-- Award entry forms will be added here by script.js -->
                         </div>
                     </div>
 
-                    <!-- Publications Section -->
                     <div class="form-section" id="publications-form">
                         <h4>Publications <button id="add-publication-btn" title="Add a publication">Add Publication</button></h4>
                         <div id="publication-entries-container">
-                            <!-- Publication entry forms will be added here by script.js -->
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Preview Pane -->
             <div class="preview-pane-wrapper" id="preview-pane-wrapper">
                 <div class="preview-controls">
                     <h2>Resume Preview</h2>
-                    <!-- Export PDF button will be added here by script.js -->
                 </div>
                 <div id="html-output" class="markdown-body">
-                    <!-- Rendered HTML will appear here -->
                 </div>
             </div>
         </div>
 
-        <!-- Hidden textarea for storing the generated Markdown -->
         <textarea id="markdown-input" style="display:none;"></textarea>
 
         <hr class="separator">
@@ -114,9 +102,9 @@
         </article>
 
         <footer>
-            <p>© 2023 Your Awesome Editor</p>
+            <p>© 2024 Your Awesome Editor</p>
         </footer>
-    </div> <!-- End .container -->
+    </div> 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

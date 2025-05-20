@@ -1,5 +1,6 @@
 {
     "name": "Bruce Wayne",
+    "profilePicture": "static/batman.png",
     "contactItems": [
         { "id": "bw_contact_phone", "type": "phone", "label": "Phone", "value": "(+1) 123-456-7890", "link": "tel:+11234567890" },
         { "id": "bw_contact_email", "type": "email", "label": "Email", "value": "bruce@wayne.enterprises", "link": "mailto:bruce@wayne.enterprises" },

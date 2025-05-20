@@ -8,6 +8,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const previewPaneWrapper = document.getElementById('preview-pane-wrapper'); 
 
     const nameInput = document.getElementById('resume-name');
+    const profilePhotoInput = document.getElementById('profile-photo-upload');
+    const profilePhotoPreview = document.getElementById('profile-photo-preview');
+
     const contactItemsButtonsContainer = document.getElementById('contact-items-buttons');
     const contactItemsContainer = document.getElementById('contact-items-container');
 
@@ -34,6 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const MINIMAL_CLIENT_FALLBACK_RESUME_DATA = {
         name: "Your Name (Fallback)",
+        profilePicture: "static/batman.png",
         contactItems: [], experience: [], education: [],
         skills: [], awards: [], publications: []
     };
@@ -44,6 +48,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Core Update Function ---
     function updatePreviewAndHiddenMD() {
+        if (!resumeData) { // Guard against resumeData not being loaded yet
+            console.warn("updatePreviewAndHiddenMD called before resumeData initialized.");
+            return;
+        }
         const md = generateMarkdownFromData();
         markdownInput.value = md; // For saving
         htmlOutput.innerHTML = marked.parse(md);
@@ -57,7 +65,16 @@ document.addEventListener('DOMContentLoaded', () => {
     function generateMarkdownFromData() {
         if (!resumeData) return "# Error: Resume data not loaded."; // Guard
         let md = "";
-        md += `# ${resumeData.name || "Your Name"}\n\n`;
+
+        // New Header with Photo and Contact Info
+        const photoSrc = resumeData.profilePicture || 'static/batman.png'; // Fallback
+        md += `<div class="resume-top-header">\n`;
+        md += `  <div class="resume-photo-container">\n`;
+        md += `    <img src="${photoSrc}" alt="Profile Photo" class="resume-photo" onerror="this.onerror=null;this.src='static/batman.png';">\n`; // Added onerror fallback
+        md += `  </div>\n`;
+        md += `  <div class="resume-contact-info-container">\n`;
+        md += `    <h1 class="resume-name-main">${resumeData.name || "Your Name"}</h1>\n`;
+
         const contactItemsForHeader = (resumeData.contactItems || []).filter(item => item.value && item.value.trim() !== '');
         const getIconForContact = (item) => {
             const type = item.type ? item.type.toLowerCase() : '';
@@ -78,28 +95,28 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         if (currentLine.length > 0) lines.push([...currentLine]);
+        
         lines.forEach(lineItems => {
             if (lineItems.length > 0) {
-                md += '<div class="resume-header">\n';
+                md += '    <div class="resume-header-contact-line">\n';
                 lineItems.forEach((item, index) => {
                     const icon = getIconForContact(item);
                     const isEffectivelyLast = (index === lineItems.length - 1);
-                    md += `  <span class="resume-header-item${isEffectivelyLast ? ' no-separator' : ''}"><span class="iconify" data-icon="${icon}"></span> ${item.link ? `<a href="${item.link}">${item.value}</a>` : item.value}</span>\n`;
+                    md += `      <span class="resume-header-item${isEffectivelyLast ? ' no-separator' : ''}"><span class="iconify" data-icon="${icon}"></span> ${item.link ? `<a href="${item.link}">${item.value}</a>` : item.value}</span>\n`;
                 });
-                md += '</div>\n';
+                md += '    </div>\n';
             }
         });
-        if (lines.length > 0) md += '\n';
+        md += `  </div>\n`; // Close resume-contact-info-container
+        md += `</div>\n\n`; // Close resume-top-header
 
         if (resumeData.experience && resumeData.experience.length > 0) {
         md += "## Experience\n\n";
         resumeData.experience.forEach(exp => {
-            // Ensure all parts are defined for consistent structure
             const title = exp.title || 'Untitled Role';
             const company = exp.company || 'Some Company';
-            const location = exp.location || 'Location'; // Default if empty
+            const location = exp.location || 'Location'; 
             const date = exp.date || 'Date Range';
-
             md += `<dl>\n  <dt>${title}</dt>\n  <dd>${company}</dd>\n  <dd>${location}</dd>\n  <dd>${date}</dd>\n</dl>\n\n`;
             (exp.bullets || []).forEach(bullet => { md += `- ${bullet}\n`; });
             md += "\n";
@@ -148,13 +165,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (type !== 'textarea') input.type = type; input.className = className;
         input.value = value || ''; if (placeholder) input.placeholder = placeholder;
         Object.entries(dataAttrs).forEach(([key, val]) => input.dataset[key] = val);
-        if (onChangeCallback) input.addEventListener('input', onChangeCallback); // Use 'input' for more responsive updates
+        if (onChangeCallback) input.addEventListener('input', onChangeCallback);
         else input.addEventListener('input', handleGenericInputChange); 
         return input;
     }
     function createButton(text, classNameOrId, onClick, title = '') {
-        const btn = document.createElement('button'); btn.id = classNameOrId;
-        btn.textContent = text; btn.className = classNameOrId.split(' ')[0]; // Use first class for general styling if multiple are passed
+        const btn = document.createElement('button');
+        if (classNameOrId.startsWith('add-') || classNameOrId.startsWith('save-') || classNameOrId.startsWith('export-') || classNameOrId.startsWith('reset-') || classNameOrId.includes('remove-')) {
+            btn.id = classNameOrId; // Treat as ID if it's a primary action button
+        }
+        btn.textContent = text; btn.className = classNameOrId.split(' ')[0]; 
         if (title) btn.title = title;
         btn.addEventListener('click', onClick); return btn;
     }
@@ -166,13 +186,12 @@ document.addEventListener('DOMContentLoaded', () => {
         let current = resumeData; const parts = path.split('.');
         try {
             for (let i = 0; i < parts.length - 1; i++) { 
-                if (!current[parts[i]]) { // Ensure path exists, especially for arrays/objects
+                if (!current[parts[i]]) { 
                     if (Array.isArray(current) && !isNaN(parseInt(parts[i]))) {
-                         // This case should ideally be handled by render functions ensuring array elements exist
                         console.warn(`Attempting to access undefined index ${parts[i]} in array part of path ${path}`);
-                        return; // Or create the element, but that's risky here
+                        return; 
                     } else {
-                        current[parts[i]] = {}; // Create object if path segment is missing
+                        current[parts[i]] = {}; 
                     }
                 }
                 current = current[parts[i]]; 
@@ -181,6 +200,58 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) { console.error("Error updating data for path:", path, e); }
         updatePreviewAndHiddenMD(); 
     }
+
+    // Photo Upload Handler
+    async function handlePhotoUpload(event) {
+        const file = event.target.files[0];
+        if (!file) {
+            // showStatusMessage("No file selected or upload cancelled.", true); // Can be noisy
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('profile_photo', file); // Key must match Flask backend
+
+        showStatusMessage("Uploading photo...", false);
+
+        try {
+            const response = await fetch('/upload_photo', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+
+            if (response.ok && result.status === 'success') {
+                resumeData.profilePicture = result.filePath;
+                if (profilePhotoPreview) {
+                    // Add cache buster to force image refresh
+                    profilePhotoPreview.src = result.filePath + '?t=' + new Date().getTime();
+                }
+                updatePreviewAndHiddenMD();
+                showStatusMessage(result.message || "Photo uploaded successfully!", false);
+            } else {
+                showStatusMessage(result.message || "Photo upload failed.", true);
+                // Restore preview to old image if upload failed but we have a previous one
+                if (profilePhotoPreview && resumeData.profilePicture) {
+                     profilePhotoPreview.src = resumeData.profilePicture + '?t=' + new Date().getTime();
+                } else if (profilePhotoPreview) {
+                     profilePhotoPreview.src = 'static/batman.png'; // Fallback
+                }
+            }
+        } catch (error) {
+            showStatusMessage('Client error uploading photo: ' + error.message, true);
+            console.error("Photo upload client error:", error);
+            if (profilePhotoPreview && resumeData.profilePicture) {
+                 profilePhotoPreview.src = resumeData.profilePicture + '?t=' + new Date().getTime();
+            } else if (profilePhotoPreview) {
+                 profilePhotoPreview.src = 'static/batman.png'; // Fallback
+            }
+        }
+    }
+    if (profilePhotoInput) {
+        profilePhotoInput.addEventListener('change', handlePhotoUpload);
+    }
+
 
     function renderContactItems() {
         contactItemsContainer.innerHTML = '';
@@ -209,7 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
     contactItemsButtonsContainer.innerHTML = '';
     contactTypes.forEach(contact => {
-        contactItemsButtonsContainer.appendChild(createButton(`Add ${contact.label}`, `add-${contact.type}-btn form-button`, () => { // Added generic form-button class
+        contactItemsButtonsContainer.appendChild(createButton(`Add ${contact.label}`, `add-${contact.type}-btn form-button`, () => { 
             if (!resumeData.contactItems) resumeData.contactItems = [];
             resumeData.contactItems.push({ id: uid(), type: contact.type, label: contact.label, value: '', link: contact.defaultLinkPrefix || '' });
             renderContactItems(); updatePreviewAndHiddenMD();
@@ -231,26 +302,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 bulletsUl.appendChild(li);
             });
             entryDiv.appendChild(bulletsUl);
-            entryDiv.appendChild(createButton(bulletsConfig.addBtnText, `add-bullet-${sectionName} form-button`, () => { // Added form-button
+            entryDiv.appendChild(createButton(bulletsConfig.addBtnText, `add-bullet-${sectionName} form-button`, () => { 
                 if (!item[bulletsConfig.key]) item[bulletsConfig.key] = []; item[bulletsConfig.key].push(""); populateAllFormsFromCurrentData(); updatePreviewAndHiddenMD();
             }));
         }
-        entryDiv.appendChild(createButton(`Remove ${fieldsConfig[0].label}`, "remove-btn section-remove-btn", () => { // Added section-remove-btn
+        entryDiv.appendChild(createButton(`Remove ${fieldsConfig[0].label}`, "remove-btn section-remove-btn", () => { 
             resumeData[sectionName] = resumeData[sectionName].filter(e => e.id !== item.id); populateAllFormsFromCurrentData(); updatePreviewAndHiddenMD();
         }));
         return entryDiv;
     }
 
 
-    const experienceFields = [
-        {label: 'Title', key: 'title'},
-        {label: 'Company', key: 'company'},
-        {label: 'Location', key: 'location', placeholder: 'e.g., City, ST'}, // Added Location
-        {label: 'Date', key: 'date'}
-    ];
+    const experienceFields = [ {label: 'Title', key: 'title'}, {label: 'Company', key: 'company'}, {label: 'Location', key: 'location', placeholder: 'e.g., City, ST'}, {label: 'Date', key: 'date'}];
     const experienceBullets = {label: 'Responsibilities/Achievements:', key: 'bullets', placeholder: 'Bullet point...', addBtnText: 'Add Bullet'};
     function renderExperienceForms() { experienceEntriesContainer.innerHTML = ''; if (!resumeData || !resumeData.experience) return; resumeData.experience.forEach((item, i) => experienceEntriesContainer.appendChild(renderListEntry(item, i, 'experience', experienceFields, experienceBullets))); }
-    addExperienceBtn.addEventListener('click', () => { if (!resumeData.experience) resumeData.experience = []; resumeData.experience.push({ id: uid(), title: "", company: "", date: "", bullets: [""] }); populateAllFormsFromCurrentData(); updatePreviewAndHiddenMD(); });
+    addExperienceBtn.addEventListener('click', () => { if (!resumeData.experience) resumeData.experience = []; resumeData.experience.push({ id: uid(), title: "", company: "", location: "", date: "", bullets: [""] }); populateAllFormsFromCurrentData(); updatePreviewAndHiddenMD(); });
 
     const educationFields = [ {label: 'Degree', key: 'degree'}, {label: 'University', key: 'university'}, {label: 'Location', key: 'location'}, {label: 'Date', key: 'date'}];
     const educationBullets = {label: 'Details/Courses:', key: 'bullets', placeholder: 'Details...', addBtnText: 'Add Detail'};
@@ -264,7 +330,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const catDiv = document.createElement('div'); catDiv.className = 'skill-category-entry'; catDiv.dataset.id = category.id;
             catDiv.appendChild(createFormGroup('Category Name:', createInputElement('text', category.categoryName, 'e.g., Programming Languages', `skill-category-name`, { path: `skills.${index}.categoryName` })));
             catDiv.appendChild(createFormGroup('Skills (one per line for GFM line breaks, or comma-separated):', createInputElement('textarea', category.entries, 'Python, Java, SQL...', `skill-category-entries`, { path: `skills.${index}.entries` })));
-            catDiv.appendChild(createButton("Remove Category", "remove-btn skill-remove-btn", () => { // Added skill-remove-btn
+            catDiv.appendChild(createButton("Remove Category", "remove-btn skill-remove-btn", () => { 
                 resumeData.skills = resumeData.skills.filter(sc => sc.id !== category.id); renderSkillForms(); updatePreviewAndHiddenMD();
             }));
             skillCategoriesContainer.appendChild(catDiv);
@@ -283,8 +349,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function populateAllFormsFromCurrentData() {
         if (!resumeData) {
             console.error("Cannot populate forms, resumeData is not initialized.");
-            nameInput.value = ''; // Clear name input if data is missing
-            // Clear other containers too
+            nameInput.value = ''; 
+            if (profilePhotoPreview) profilePhotoPreview.src = 'static/batman.png';
             contactItemsContainer.innerHTML = '';
             experienceEntriesContainer.innerHTML = '';
             educationEntriesContainer.innerHTML = '';
@@ -294,6 +360,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         nameInput.value = resumeData.name || '';
+        if (profilePhotoPreview) {
+             profilePhotoPreview.src = (resumeData.profilePicture || 'static/batman.png') + '?t=' + new Date().getTime(); // Add cache buster
+             profilePhotoPreview.onerror = () => { profilePhotoPreview.src = 'static/batman.png'; }; // Fallback on error
+        }
         renderContactItems();
         renderExperienceForms();
         renderEducationForms();
@@ -303,11 +373,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     nameInput.addEventListener('input', handleGenericInputChange); 
 
-    // --- Main Controls (Save, Reset) & Status Messages ---
     function showStatusMessage(message, isError = false) {
         statusMessageDiv.textContent = message;
-        statusMessageDiv.style.color = isError ? 'rgb(220, 53, 69)' : 'rgb(40, 167, 69)';
-        setTimeout(() => statusMessageDiv.textContent = '', 5000);
+        statusMessageDiv.className = isError ? 'status-error' : 'status-success'; // Use classes for styling
+        setTimeout(() => {
+            statusMessageDiv.textContent = '';
+            statusMessageDiv.className = '';
+        }, 5000);
     }
 
     const saveButton = createButton("Save Resume", "save-resume-btn", async () => {
@@ -315,7 +387,7 @@ document.addEventListener('DOMContentLoaded', () => {
             showStatusMessage("Error: No resume data to save.", true);
             return;
         }
-        const markdownToSave = markdownInput.value; // Generated by updatePreviewAndHiddenMD
+        const markdownToSave = markdownInput.value; 
         const resumeDataJsonString = JSON.stringify(resumeData);
 
         const formData = new FormData(); 
@@ -337,7 +409,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     throw new Error(`Failed to fetch template: ${response.statusText}`);
                 }
                 const templateData = await response.json();
-                resumeData = templateData; // Directly assign, no deep copy needed if it's fresh from server
+                resumeData = templateData; 
+                if (!resumeData.profilePicture) { // Ensure template has it, or provide fallback
+                    resumeData.profilePicture = 'static/batman.png';
+                }
                 populateAllFormsFromCurrentData();
                 updatePreviewAndHiddenMD(); 
                 showStatusMessage("Form reset to default template. Click 'Save Resume' to make this the new resume.json and resume.md.");
@@ -349,7 +424,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     mainControlsContainer.append(saveButton, resetButton);
 
-    // --- PDF Export Button ---
     const exportPdfButton = createButton("Export as PDF", "export-pdf-btn", async () => {
         showStatusMessage("Generating PDF...", false);
         const htmlContentToExport = document.getElementById('html-output').innerHTML;
@@ -379,23 +453,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const pdfButtonContainer = previewPaneWrapper.querySelector('.preview-controls');
     if (pdfButtonContainer) { pdfButtonContainer.appendChild(exportPdfButton); }
 
-
-    // --- INITIALIZATION LOGIC ---
     function initializeEditor() {
-        // initialResumeDataJsonString is now globally available from index.html
         if (typeof window.initialResumeDataJsonString === 'string') {
             try {
                 resumeData = JSON.parse(window.initialResumeDataJsonString);
                 console.log("Successfully parsed initial resume data from server.");
             } catch (e) {
                 console.error("Failed to parse initial resume data from server:", e);
-                console.log("Falling back to minimal client-side default data.");
-                resumeData = JSON.parse(JSON.stringify(MINIMAL_CLIENT_FALLBACK_RESUME_DATA)); // Deep copy
+                resumeData = JSON.parse(JSON.stringify(MINIMAL_CLIENT_FALLBACK_RESUME_DATA)); 
             }
         } else {
             console.error("Initial resume data string not found or not a string.");
-            console.log("Falling back to minimal client-side default data.");
-            resumeData = JSON.parse(JSON.stringify(MINIMAL_CLIENT_FALLBACK_RESUME_DATA)); // Deep copy
+            resumeData = JSON.parse(JSON.stringify(MINIMAL_CLIENT_FALLBACK_RESUME_DATA));
+        }
+        
+        // Ensure profilePicture exists in resumeData after loading
+        if (!resumeData.profilePicture) {
+            resumeData.profilePicture = 'static/batman.png'; // Default fallback
         }
         
         populateAllFormsFromCurrentData(); 
