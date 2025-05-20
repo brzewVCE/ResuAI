@@ -9,22 +9,63 @@
             "description": "Humanitarian of the Year (via Wayne Foundation)",
             "id": "bw_award_2",
             "year": "Multiple"
+        },
+        {
+            "id": "mawfz9h6tu093aca3",
+            "description": "asdasdasdasdasdasdasdasdasd",
+            "year": "asd"
         }
     ],
     "contactItems": [
+        {
+            "id": "bw_contact_phone",
+            "label": "Phone",
+            "link": "tel:+11234567890",
+            "type": "phone",
+            "value": "(+1) 123-456-7890"
+        },
         {
             "id": "bw_contact_email",
             "label": "Email",
             "link": "mailto:bruce@wayne.enterprises",
             "type": "email",
             "value": "bruce@wayne.enterprises"
+        },
+        {
+            "id": "bw_contact_location",
+            "label": "Location",
+            "link": "",
+            "type": "location",
+            "value": "Wayne Manor, Gotham City"
+        },
+        {
+            "id": "bw_contact_website",
+            "label": "Website",
+            "link": "https://wayne.enterprises",
+            "type": "website",
+            "value": "wayne.enterprises"
+        },
+        {
+            "id": "bw_contact_linkedin",
+            "label": "LinkedIn",
+            "link": "https://linkedin.com/in/brucewayne",
+            "type": "linkedin",
+            "value": "linkedin.com/in/brucewayne"
+        },
+        {
+            "id": "bw_contact_github",
+            "label": "GitHub",
+            "link": "https://github.com/thebatman",
+            "type": "github",
+            "value": "github.com/thebatman"
         }
     ],
     "education": [
         {
             "bullets": [
                 "Expertise in Criminology, Forensic Science, Engineering, Business Administration.",
-                "Extensive training in tactical driving, stealth, and escapology."
+                "Extensive training in tactical driving, stealth, and escapology.",
+                "sdaaaaaaaaaa"
             ],
             "date": "Ongoing",
             "degree": "Various (Self-Taught & Specialized Training)",
@@ -38,7 +79,9 @@
             "bullets": [
                 "Oversee global operations of a multi-billion dollar conglomerate.",
                 "Drive innovation in technology, green energy, and urban renewal projects.",
-                "Fund numerous charitable initiatives through The Wayne Foundation."
+                "Fund numerous charitable initiatives through The Wayne Foundation.",
+                "asdasdasdasdasdasdasd",
+                "sdaaaaaaaaaaaaa"
             ],
             "company": "Wayne Enterprises",
             "date": "2005 - Present",
@@ -49,12 +92,30 @@
             "bullets": [
                 "Proactively reduced city-wide crime rates by an estimated 75% using proprietary methods and advanced technology (see <sup class=\"crossref-ref\"><a href=\"#ref-P1\">[~P1]</a></sup>).",
                 "Developed and deployed non-lethal deterrents and capture tools.",
-                "Mastered multiple martial arts and detective skills."
+                "Mastered multiple martial arts and detective skills.",
+                "asdasdasdasdasdasdasdasdasdasdasdasd",
+                "asdasdasdasdasdasdasdasd"
             ],
             "company": "Self-Employed (Nocturnal Division)",
             "date": "2005 - Present",
             "id": "bw_exp_2",
             "title": "Vigilante"
+        },
+        {
+            "id": "mawfyfllz5qxs0utb",
+            "title": "asdasdasdasdasdasdasdasdasdasdasdas",
+            "company": "dasdasdasdasdasdasdasdasdasdasd",
+            "date": "asdasdasdasdasdasdasdasdasd",
+            "bullets": [
+                "asdasdasdasdasdasdasdasd",
+                "asdasdasdasdasdasdasdasd",
+                "adasdasdasdasdasdasd",
+                "asdasdasdasdasdasdasd",
+                "asdasdasdasdasdasdasdasd",
+                "asdasdasdasdasdasdasdasd",
+                "asdasdasdasd"
+            ],
+            "location": "asdasdasdasdasdasdasdasd"
         }
     ],
     "name": "Bruce Wayne",
@@ -66,6 +127,14 @@
             "refId": "P1",
             "title": "A Comparative Study of Urban Crime Deterrence Methodologies",
             "venue": "<em>Journal of Applied Criminology (Internal Monograph), 2023</em>"
+        },
+        {
+            "id": "mawfzbzr9biiwaipt",
+            "refId": "P2asd",
+            "caption": "[~P2]",
+            "title": "asdasdasd",
+            "authors": "asdasdasdasdasd",
+            "venue": "asdasdasdasdasd"
         }
     ],
     "skills": [
@@ -83,6 +152,11 @@
             "categoryName": "Human Languages",
             "entries": "English (Native), Spanish, French, Japanese, Mandarin, Russian (Fluent in all)",
             "id": "bw_skill_3"
+        },
+        {
+            "id": "mawfz2shrbztwgs8q",
+            "categoryName": "asdasdasdasdasdasdasdasd",
+            "entries": "asdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasd"
         }
     ]
 }

@@ -92,12 +92,18 @@ document.addEventListener('DOMContentLoaded', () => {
         if (lines.length > 0) md += '\n';
 
         if (resumeData.experience && resumeData.experience.length > 0) {
-            md += "## Experience\n\n";
-            resumeData.experience.forEach(exp => {
-                md += `<dl>\n  <dt>${exp.title || 'Untitled Role'}</dt>\n  <dd>${exp.company || 'Some Company'}</dd>\n  <dd>${exp.date || 'Date Range'}</dd>\n</dl>\n\n`;
-                (exp.bullets || []).forEach(bullet => { md += `- ${bullet}\n`; });
-                md += "\n";
-            });
+        md += "## Experience\n\n";
+        resumeData.experience.forEach(exp => {
+            // Ensure all parts are defined for consistent structure
+            const title = exp.title || 'Untitled Role';
+            const company = exp.company || 'Some Company';
+            const location = exp.location || 'Location'; // Default if empty
+            const date = exp.date || 'Date Range';
+
+            md += `<dl>\n  <dt>${title}</dt>\n  <dd>${company}</dd>\n  <dd>${location}</dd>\n  <dd>${date}</dd>\n</dl>\n\n`;
+            (exp.bullets || []).forEach(bullet => { md += `- ${bullet}\n`; });
+            md += "\n";
+        });
         }
         if (resumeData.education && resumeData.education.length > 0) {
             md += "## Education\n\n";
@@ -235,7 +241,13 @@ document.addEventListener('DOMContentLoaded', () => {
         return entryDiv;
     }
 
-    const experienceFields = [ {label: 'Title', key: 'title'}, {label: 'Company', key: 'company'}, {label: 'Date', key: 'date'}];
+
+    const experienceFields = [
+        {label: 'Title', key: 'title'},
+        {label: 'Company', key: 'company'},
+        {label: 'Location', key: 'location', placeholder: 'e.g., City, ST'}, // Added Location
+        {label: 'Date', key: 'date'}
+    ];
     const experienceBullets = {label: 'Responsibilities/Achievements:', key: 'bullets', placeholder: 'Bullet point...', addBtnText: 'Add Bullet'};
     function renderExperienceForms() { experienceEntriesContainer.innerHTML = ''; if (!resumeData || !resumeData.experience) return; resumeData.experience.forEach((item, i) => experienceEntriesContainer.appendChild(renderListEntry(item, i, 'experience', experienceFields, experienceBullets))); }
     addExperienceBtn.addEventListener('click', () => { if (!resumeData.experience) resumeData.experience = []; resumeData.experience.push({ id: uid(), title: "", company: "", date: "", bullets: [""] }); populateAllFormsFromCurrentData(); updatePreviewAndHiddenMD(); });
