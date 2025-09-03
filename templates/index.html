@@ -1,0 +1,214 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ResuAI - AI Powered Resume Builder</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body);"></script>
+    
+    <script>
+        window.initialResumeDataJsonString = {{ initial_resume_json_str | tojson }};
+    </script>
+</head>
+<body>
+    <div class="container"> 
+        <header>
+            <div class="header-content">
+                <div class="title-section">
+                    <h1 id="app-title">ResuAI - AI Powered Resume Builder</h1>
+                    <p id="app-subtitle">Edit your resume using the form below. AI can help generate content based on your input and a target job description.</p>
+                </div>
+                <div class="language-switcher">
+                    <button id="lang-pl" class="lang-btn active" data-lang="pl">
+                        <span class="flag-icon">🇵🇱</span> PL
+                    </button>
+                    <button id="lang-en" class="lang-btn" data-lang="en">
+                        <span class="flag-icon">🇺🇸</span> EN
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- API Key Management Section -->
+        <div class="api-key-section form-section collapsible-section">
+            <h4 id="api-key-title" class="collapsible-header">
+                <span class="iconify collapse-icon" data-icon="mdi:chevron-down"></span>
+                <span id="api-key-title-text">API Key Management</span>
+                <small style="font-weight:normal; font-size:0.8em; margin-left:10px;">
+                    <a href="/api_guide/pl" id="api-guide-link" target="_blank" title="How to get an API Key">
+                        <span class="iconify" data-icon="mdi:help-circle-outline"></span> <span id="get-key-help">Get Key Help</span>
+                    </a>
+                </small>
+            </h4>
+            <div class="collapsible-content">
+                <div class="form-group">
+                    <label for="api-key-input" id="api-key-label">Gemini API Key:</label>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <input type="password" id="api-key-input" placeholder="Enter your Gemini API Key here" data-placeholder-en="Enter your Gemini API Key here" data-placeholder-pl="Wprowadź tutaj swój klucz API Gemini">
+                        <button id="save-api-key-btn" class="form-button" title="Save API Key">
+                            <span class="iconify" data-icon="mdi:content-save"></span> <span id="save-key-text">Save Key</span>
+                        </button>
+                        <button id="toggle-api-key-visibility-btn" class="form-button" title="Show/Hide Key" style="padding: 9px 12px;">
+                            <span class="iconify" data-icon="mdi:eye-outline"></span>
+                        </button>
+                    </div>
+                </div>
+                <div id="api-key-status" class="status-badge">
+                    <span id="api-key-status-text">Loading API Key status...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Personal Information Section -->
+        <div class="personal-info-section form-section collapsible-section">
+            <h4 id="personal-info-title" class="collapsible-header">
+                <span class="iconify collapse-icon" data-icon="mdi:chevron-down"></span>
+                <span id="personal-info-title-text">Personal Information</span>
+            </h4>
+            <div class="collapsible-content">
+                <div class="personal-info-main-row">
+                    <div class="personal-info-name-section">
+                        <div class="form-group">
+                            <label for="resume-name" id="name-label">Full Name:</label>
+                            <input type="text" id="resume-name" class="green-field" data-path="name" placeholder="e.g., Bruce Wayne" data-placeholder-en="e.g., John Doe" data-placeholder-pl="np. Jan Kowalski">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="profile-photo-upload" id="photo-label">Profile Picture:</label>
+                            <input type="file" id="profile-photo-upload" name="profile_photo" accept="image/*" class="green-field">
+                            <small id="photo-note">Changes are saved automatically upon selection.</small>
+                        </div>
+                    </div>
+                    
+                    <div class="personal-info-photo-section">
+                        <img id="profile-photo-preview" src="static/batman.png" alt="Profile Preview">
+                    </div>
+                    
+                    <div class="personal-info-contact-buttons">
+                        <label class="form-section-sub-label" id="contact-label">Contact Details:</label>
+                        <div id="contact-items-buttons" class="button-group-sm">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="contact-items-grid">
+                    <div id="contact-items-container">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="job-context-wrapper">
+            <label for="job-description-context" id="job-context-label">Target Job Description (for AI context):</label>
+            <textarea id="job-description-context" class="blue-field" rows="6" placeholder="Paste target job description here... This will be used by AI generation features." data-placeholder-en="Paste target job description here... This will be used by AI generation features." data-placeholder-pl="Wklej tutaj opis oferty pracy... Zostanie to wykorzystane przez funkcje generowania AI."></textarea>
+        </div>
+
+        <div class="main-layout" id="main-layout">
+            <!-- ... (rest of the form-editor-wrapper and preview-pane-wrapper as before) ... -->
+            <div class="form-editor-wrapper">
+                <h3>Edit Your Resume</h3>
+                <div class="controls-header" id="main-controls">
+                    <!-- Save, Reset buttons will be added here by JS -->
+                </div>
+                <div id="status-message"></div>
+
+                <div id="resume-form-container">
+                    <div class="form-section" id="experience-form">
+                        <h4 id="experience-title">
+                            <span>Experience</span>
+                        </h4>
+                        <div id="experience-entries-container">
+                        </div>
+                        <button id="add-experience-btn" title="Add a new experience entry" class="form-section-header-btn add-btn">Add Experience</button>
+                    </div>
+
+                    <div class="form-section" id="education-form">
+                        <h4 id="education-title">
+                            <span>Education</span>
+                        </h4>
+                        <div id="education-entries-container">
+                        </div>
+                        <button id="add-education-btn" title="Add a new education entry" class="form-section-header-btn add-btn">Add Education</button>
+                    </div>
+
+
+                        <h4 id="skills-title">
+                            <span>Skills</span>
+                        </h4>
+                        <div class="form-group">
+                            <label for="user-initial-skills" id="skills-label">Your Initial Skill Ideas (for AI):</label>
+                            <textarea id="user-initial-skills" class="green-field" data-path="userInitialSkills" rows="3" placeholder="e.g., project management, Python, data analysis, leadership..."></textarea>
+                        </div>
+                                                <div>
+                            <button id="ai-generate-skills-btn" title="Generate all skill categories and entries using AI" class="ai-generate-btn form-section-header-btn">
+                                <span class="iconify" data-icon="mdi:magic-staff"></span> <span id="gen-skills-text">Gen Skills</span>
+                            </button>
+                        </div>
+                        <div id="skill-categories-container">
+                        </div>
+
+                        <button id="add-skill-category-btn" title="Add a new skill category manually" class="form-section-header-btn add-btn">Add Category</button>
+
+                    <div class="form-section" id="projects-form">
+                        <h4 id="projects-title">Projects</h4>
+                        <div id="project-entries-container">
+                        </div>
+                    <button id="add-project-btn" title="Add a new project entry" class="form-section-header-btn add-btn">Add Project</button>
+                    </div>
+
+                    <div class="form-section" id="certifications-form">
+                        <h4 id="certifications-title">Certifications</h4>
+                        <div id="certification-entries-container">
+                        </div>
+                    <button id="add-certification-btn" title="Add a certification" class="form-section-header-btn add-btn">Add Certification</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="preview-pane-wrapper" id="preview-pane-wrapper">
+                <!-- Cover Letter Section -->
+                <div class="cover-letter-section form-section">
+                    <h4 id="cover-letter-title">Cover Letter</h4>
+                    <div class="cover-letter-controls">
+                        <button id="generate-cover-letter-btn" class="ai-generate-btn" title="Generate cover letter based on CV and job description">
+                            <span class="iconify" data-icon="mdi:magic-staff"></span> <span id="cover-letter-generate">Generate Cover Letter</span>
+                        </button>
+                        <button id="export-cover-letter-btn" class="form-button" title="Export cover letter as PDF" style="display: none;">
+                            <span class="iconify" data-icon="mdi:file-pdf-box"></span> <span id="cover-letter-export">Export Letter PDF</span>
+                        </button>
+                        <button id="clear-cover-letter-btn" class="form-button" title="Clear cover letter content" style="display: none;">
+                            <span class="iconify" data-icon="mdi:delete"></span> <span id="cover-letter-clear">Clear</span>
+                        </button>
+                    </div>
+                    <div class="form-group">
+                        <label for="cover-letter-content" id="cover-letter-content-label">Letter Content:</label>
+                        <textarea id="cover-letter-content" class="blue-field" rows="12" placeholder="Generated cover letter will appear here..." readonly data-placeholder-en="Generated cover letter will appear here..." data-placeholder-pl="Wygenerowany list motywacyjny pojawi się tutaj..."></textarea>
+                    </div>
+                </div>
+
+                <div class="preview-controls">
+                    <h2>Resume Preview</h2>
+                </div>
+                <div id="html-output" class="markdown-body">
+                </div>
+            </div>
+        </div>
+
+        <textarea id="markdown-input" style="display:none;"></textarea>
+
+        <hr class="separator">
+        <footer>
+            <p>© 2024 ResuAI Project</p>
+        </footer>
+    </div> 
+    <script src="{{ url_for('static', filename='scripts/script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+Based on the user's project description, generate a professional project description for CV.
+
+User project description: {user_description}
+Job context: {job_context}
+
+Rules:
+- Description should be concise (2-3 sentences)
+- Contains used technologies/tools
+- Highlights achievements and results
+- Tailored to job context
+- In English
+
+Return in JSON format:
+{{"project_description": "Professional project description..."}}

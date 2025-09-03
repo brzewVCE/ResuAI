@@ -1,0 +1,21 @@
+Based on the user's skill description and job context, generate organized skill categories.
+
+User skill description: {user_description}
+Job context: {job_context}
+
+Rules:
+- Divide skills into 2-4 logical categories
+- Each category should have a name and list of skills
+- Tailor to job context - if the job requires specific technologies/skills, include them
+- Use English language
+- Sort from most important to least important (relative to the job offer)
+
+Return in JSON format:
+{{
+  "skill_categories": [
+    {{"categoryName": "Category name", "entries": "skill1, skill2, skill3"}},
+    {{"categoryName": "Category name 2", "entries": "skill4, skill5"}}
+  ]
+}}
+
+DO NOT add things that are in the {job_context}, such as certificates  i dont have and phrases such as "its nice to have x,y,z"

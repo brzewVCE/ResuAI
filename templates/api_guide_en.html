@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Key Setup Guide - ResuAI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            background-color: #1a1a1a;
+            color: #e4e4e4;
+            margin: 0;
+            padding: 0;
+        }
+        .guide-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        .guide-header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #4CAF50;
+        }
+        .guide-header h1 {
+            color: #e4e4e4;
+            margin-bottom: 10px;
+        }
+        .guide-header p {
+            color: #b0b0b0;
+        }
+        .step {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #404040;
+            border-radius: 8px;
+            background-color: #2a2a2a;
+            color: #e4e4e4;
+        }
+        .step-number {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+        .step-title {
+            display: inline-block;
+            font-size: 18px;
+            font-weight: 600;
+            color: #e4e4e4;
+            vertical-align: top;
+            margin-top: 3px;
+        }
+        .step-content {
+            margin-top: 15px;
+            margin-left: 45px;
+            line-height: 1.6;
+            color: #d0d0d0;
+        }
+        .step-content p {
+            color: #d0d0d0;
+        }
+        .step-content ul {
+            color: #d0d0d0;
+        }
+        .step-content li {
+            color: #d0d0d0;
+            margin-bottom: 5px;
+        }
+        .code-snippet {
+            background-color: #1e1e1e;
+            border: 1px solid #404040;
+            border-radius: 6px;
+            padding: 10px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            margin: 10px 0;
+            color: #e4e4e4;
+        }
+        .code-snippet a {
+            color: #66B3FF;
+            text-decoration: none;
+        }
+        .code-snippet a:hover {
+            color: #99CCFF;
+            text-decoration: underline;
+        }
+        .warning {
+            background-color: #2d2a1f;
+            border: 1px solid #5d5016;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+            color: #f0e68c;
+        }
+        .warning strong {
+            color: #ffeb3b;
+        }
+        .back-button {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        .back-button:hover {
+            background-color: #0056b3;
+            color: white;
+            text-decoration: none;
+        }
+        .screenshot-placeholder {
+            background-color: #333333;
+            border: 2px dashed #666666;
+            border-radius: 6px;
+            padding: 40px;
+            text-align: center;
+            color: #b0b0b0;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="guide-container">
+        <a href="javascript:window.close();" class="back-button">← Back to ResuAI</a>
+        
+        <div class="guide-header">
+            <h1>Google Gemini API Key Setup Guide</h1>
+            <p>Follow these steps to get your free API key for ResuAI</p>
+        </div>
+
+        <div class="step">
+            <span class="step-number">1</span>
+            <span class="step-title">Go to Google AI Studio</span>
+            <div class="step-content">
+                <p>Visit the Google AI Studio website to create your API key:</p>
+                <div class="code-snippet">
+                    <a href="https://aistudio.google.com/app/apikey" target="_blank">https://aistudio.google.com/app/apikey</a>
+                </div>
+                <p>You'll need to sign in with your Google account if you haven't already.</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">2</span>
+            <span class="step-title">Create a New API Key</span>
+            <div class="step-content">
+                <p>Once you're on the API Keys page:</p>
+                <ul>
+                    <li>Click the "Create API Key" button</li>
+                    <li>Choose "Create API key in new project" (recommended)</li>
+                    <li>Give your project a meaningful name like "ResuAI"</li>
+                </ul>
+                <div class="screenshot-placeholder">
+                    Screenshot: API key creation interface
+                </div>
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">3</span>
+            <span class="step-title">Copy Your API Key</span>
+            <div class="step-content">
+                <p>After creating the API key:</p>
+                <ul>
+                    <li>Your new API key will be displayed</li>
+                    <li>Click the "Copy" button to copy it to your clipboard</li>
+                    <li>The key will look something like this:</li>
+                </ul>
+                <div class="code-snippet">
+                    AIzaSyB***********************************
+                </div>
+                <div class="warning">
+                    <strong>⚠️ Important:</strong> Keep your API key secure! Don't share it publicly or commit it to version control.
+                </div>
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">4</span>
+            <span class="step-title">Add API Key to ResuAI</span>
+            <div class="step-content">
+                <p>Now return to ResuAI and:</p>
+                <ul>
+                    <li>Paste your API key into the "Google Gemini API Key" field</li>
+                    <li>Click "Save API Key"</li>
+                    <li>You should see a green "✓ API Key Set" status</li>
+                </ul>
+                <p>That's it! You can now use all AI features in ResuAI.</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">5</span>
+            <span class="step-title">Free Tier Information</span>
+            <div class="step-content">
+                <p>Google Gemini API offers a generous free tier:</p>
+                <ul>
+                    <li><strong>15 requests per minute</strong></li>
+                    <li><strong>1,500 requests per day</strong></li>
+                    <li><strong>1 million tokens per month</strong></li>
+                </ul>
+                <p>This is more than enough for typical resume building activities. You can monitor your usage in the Google AI Studio dashboard.</p>
+                <div class="warning">
+                    <strong>💡 Tip:</strong> If you ever exceed the free tier limits, you can upgrade to a paid plan in Google Cloud Console, but most users will never need to.
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px;">
+            <a href="javascript:window.close();" class="back-button">← Back to ResuAI</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,19 @@
+Wygeneruj profesjonalny tytuł stanowiska na podstawie następujących informacji:
+
+Opis roli użytkownika: {user_description}
+Firma: {company}
+Kontekst oferty pracy: {job_context}
+
+Zwróć tylko tytuł stanowiska, bez dodatkowych wyjaśnień. Tytuł powinien być:
+- Profesjonalny i branżowy
+- Zwięzły (maksymalnie 4-5 słów)
+- Dopasowany do opisu i kontekstu
+- W języku polskim
+
+Przykłady dobrych tytułów:
+- Senior Software Engineer
+- Kierownik ds. Marketingu
+- Analityk Danych
+- Product Designer
+
+Make sure the title does not address target job context, but allign perfectly with what the target job requires.

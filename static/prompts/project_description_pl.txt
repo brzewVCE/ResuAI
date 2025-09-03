@@ -1,0 +1,14 @@
+Na podstawie opisu projektu użytkownika wygeneruj profesjonalny opis projektu dla CV.
+
+Opis projektu użytkownika: {user_description}
+Kontekst oferty pracy: {job_context}
+
+Zasady:
+- Opis powinien być zwięzły (2-3 zdania)
+- Zawiera użyte technologie/narzędzia
+- Podkreśla osiągnięcia i rezultaty
+- Dopasowany do kontekstu oferty pracy
+- W języku polskim
+
+Zwróć w formacie JSON:
+{{"project_description": "Profesjonalny opis projektu..."}}

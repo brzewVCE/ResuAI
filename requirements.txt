@@ -1,0 +1,5 @@
+# Updated requirements.txt
+flask
+playwright
+Werkzeug
+google-genai

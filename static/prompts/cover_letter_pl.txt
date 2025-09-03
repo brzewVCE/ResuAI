@@ -1,0 +1,25 @@
+Na podstawie doświadczenia zawodowego i oferty pracy wygeneruj zwięzły list motywacyjny.
+
+Doświadczenie zawodowe: {experience}
+Wykształcenie: {education}
+Umiejętności: {skills}
+Projekty: {projects}
+Kontekst oferty pracy: {job_context}
+
+Zasady:
+- List składa się z dokładnie 5-6 zdań
+- Bez danych kontaktowych, nagłówków ani podpisów
+- Skupia się na dopasowaniu doświadczenia do wymagań stanowiska
+- Profesjonalny ton, język polski
+- Konkretne osiągnięcia i umiejętności
+- Bezpośrednie odniesienie do oferty pracy
+- Odpowiednie formatowanie z akapitami oddzielonymi pustymi liniami
+
+Struktura formatowania:
+- Pierwsze zdanie: wprowadzenie i zainteresowanie stanowiskiem
+- Środkowy akapit (2-3 zdania): dopasowanie doświadczenia do wymagań
+- Ostatnie zdanie: profesjonalne zakończenie z wezwaniem do działania
+
+Użyj znaku nowej linii między akapitami dla czytelności.
+
+Zwróć tylko treść listu motywacyjnego z odpowiednim formatowaniem.

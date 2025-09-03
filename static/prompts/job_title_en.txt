@@ -1,0 +1,19 @@
+Generate a professional job title based on the following information:
+
+User role description: {user_description}
+Company: {company}
+Job context: {job_context}
+
+Return only the job title, without additional explanations. The title should be:
+- Professional and industry-appropriate
+- Concise (maximum 4-5 words)
+- Matched to the description and context
+- In English
+
+Examples of good titles:
+- Senior Software Engineer
+- Marketing Manager
+- Data Scientist
+- Product Designer
+
+Make sure the title does not address target job context, but allign perfectly with what the target job requires.

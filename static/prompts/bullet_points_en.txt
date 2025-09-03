@@ -1,0 +1,18 @@
+Based on the user's role description, generate {num_bullets} professional bullet points for a CV.
+
+User role description: {user_description}
+Company: {company}
+Target job context: {job_context}
+
+Rules for bullet points:
+- Each point starts with a past tense verb (e.g., "Managed", "Developed", "Increased")
+- Contains specific achievements and numbers where possible
+- Professional and concise
+- Tailored to the job context
+- In English
+- Less is more
+
+Return bullet points in JSON format:
+{{"bullets": ["point 1", "point 2", "point 3"]}}
+
+Make sure the bulletpoints do not address target job context, but allign perfectly with what the target job requires.

@@ -1,0 +1,154 @@
+{
+  "certifications": [
+    {
+      "date": "2020",
+      "id": "bw_cert_1",
+      "issuer": "Gotham University",
+      "name": "Advanced Leadership in Crisis Management"
+    },
+    {
+      "date": "2019",
+      "id": "bw_cert_2",
+      "issuer": "International Forensic Institute",
+      "name": "Certified Forensic Analysis Specialist"
+    }
+  ],
+  "contactItems": [
+    {
+      "id": "bw_contact_phone",
+      "label": "Phone",
+      "link": "tel:+11234567890",
+      "type": "phone",
+      "value": "(+1) 123-456-7890"
+    },
+    {
+      "id": "bw_contact_email",
+      "label": "Email",
+      "link": "mailto:bruce@wayne.enterprises",
+      "type": "email",
+      "value": "bruce@wayne.enterprises"
+    },
+    {
+      "id": "bw_contact_location",
+      "label": "Location",
+      "link": "",
+      "type": "location",
+      "value": "Wayne Manor, Gotham City"
+    },
+    {
+      "id": "bw_contact_website",
+      "label": "Website",
+      "link": "https://wayne.enterprises",
+      "type": "website",
+      "value": "wayne.enterprises"
+    },
+    {
+      "id": "bw_contact_linkedin",
+      "label": "LinkedIn",
+      "link": "https://linkedin.com/in/brucewayne",
+      "type": "linkedin",
+      "value": "linkedin.com/in/brucewayne"
+    },
+    {
+      "id": "bw_contact_github",
+      "label": "GitHub",
+      "link": "https://github.com/thebatman",
+      "type": "github",
+      "value": "github.com/thebatman"
+    }
+  ],
+  "education": [
+    {
+      "bullets": [
+        "Expertise in Criminology, Forensic Science, Engineering, Business Administration.",
+        "Extensive training in tactical driving, stealth, and escapology."
+      ],
+      "date": "Ongoing",
+      "degree": "Various (Self-Taught & Specialized Training)",
+      "id": "bw_edu_1",
+      "location": "Worldwide",
+      "university": "Global Institutions of Advanced Studies"
+    }
+  ],
+  "experience": [
+    {
+      "bullets": [
+        "Oversee global operations of a multi-billion dollar conglomerate.",
+        "Drive innovation in technology, green energy, and urban renewal projects.",
+        "Fund numerous charitable initiatives through The Wayne Foundation."
+      ],
+      "company": "Wayne Enterprises",
+      "date": "2005 - Present",
+      "id": "bw_exp_1",
+      "location": "Gotham City",
+      "numBulletPointsToGenerate": 3,
+      "title": "CEO & Philanthropist",
+      "userRoleDescription": "Led a major multinational corporation with diverse holdings in technology, energy, and philanthropy. Focused on strategic growth, innovation, and community reinvestment. Also, secretly operated as a crime-fighting vigilante."
+    },
+    {
+      "bullets": [
+        "Proactively reduced city-wide crime rates by an estimated 75% using proprietary methods and advanced technology (see <sup class=\"crossref-ref\"><a href=\"#ref-P1\">[~P1]</a></sup>).",
+        "Developed and deployed non-lethal deterrents and capture tools.",
+        "Mastered multiple martial arts and detective skills."
+      ],
+      "company": "Self-Employed (Nocturnal Division)",
+      "date": "2005 - Present",
+      "id": "bw_exp_2",
+      "location": "Gotham City Rooftops",
+      "numBulletPointsToGenerate": 3,
+      "title": "Vigilante",
+      "userRoleDescription": "Independently and proactively addressed severe criminal activity in a major metropolitan area. Developed and utilized advanced technology and methods for investigation, deterrence, and apprehension. Focused on non-lethal solutions and systemic crime reduction."
+    }
+  ],
+  "language": "en",
+  "name": "Bruce Wayne",
+  "profilePicture": "static/scripts/batman.png",
+  "projects": [
+    {
+      "achievements": [
+        "Reduced crime prediction false positives by 85% through advanced ML algorithms",
+        "Implemented real-time processing of over 10,000 surveillance feeds",
+        "Achieved 95% accuracy in threat assessment and risk profiling"
+      ],
+      "date": "2020 - Present",
+      "description": "Comprehensive AI-powered crime detection system utilizing machine learning algorithms and computer vision to analyze urban security patterns and predict criminal activities in real-time across metropolitan areas.",
+      "id": "bw_project_1",
+      "numBulletPointsToGenerate": 3,
+      "technologies": "Python, TensorFlow, OpenCV, IoT, Real-time Analytics",
+      "title": "Gotham Security Analytics Platform",
+      "userProjectDescription": "Developed a comprehensive crime detection and prevention system for Gotham City using advanced AI algorithms, computer vision, and IoT sensors. The system analyzes patterns in real-time and predicts potential criminal activities."
+    },
+    {
+      "achievements": [
+        "Deployed across 50+ emergency response units in metropolitan area",
+        "Reduced emergency response time by 40% through optimized coordination",
+        "Maintained 99.9% uptime during critical operations"
+      ],
+      "date": "2019 - 2020",
+      "description": "Secure real-time communication platform for emergency response coordination, featuring encrypted messaging, GPS tracking, and automated resource allocation during crisis management operations.",
+      "id": "bw_project_2",
+      "numBulletPointsToGenerate": 3,
+      "technologies": "Node.js, React, WebSocket, Encryption, GPS Integration",
+      "title": "Emergency Response Coordination System",
+      "userProjectDescription": "Created a secure communication and coordination platform for emergency response teams, featuring encrypted messaging, real-time location tracking, and automated resource allocation during crisis situations."
+    }
+  ],
+  "skills": [
+    {
+      "categoryName": "Combat & Tactical",
+      "entries": "Expert in over 127 forms of martial arts, Stealth, Marksmanship (non-lethal), Gadgetry Design & Usage, Tactical Planning",
+      "id": "bw_skill_1"
+    },
+    {
+      "categoryName": "Intellectual & Business",
+      "entries": "Genius-level Intellect, Detective Skills, Computer Hacking, Financial Management, Engineering, Chemistry, $\\LaTeX$ for formal reports",
+      "id": "bw_skill_2"
+    },
+    {
+      "categoryName": "Human Languages",
+      "entries": "English (Native), Spanish, French, Japanese, Mandarin, Russian (Fluent in all)",
+      "id": "bw_skill_3"
+    }
+  ],
+  "userInitialSkills": "Martial arts, detective work, technology development, business management, stealth, intimidation."
+}

@@ -1,0 +1,25 @@
+Based on professional experience and job offer, generate a concise cover letter.
+
+Professional experience: {experience}
+Education: {education}
+Skills: {skills}
+Projects: {projects}
+Job context: {job_context}
+
+Rules:
+- Letter consists of exactly 5-6 sentences
+- No contact information, headers, or signatures
+- Focuses on matching experience to position requirements
+- Professional tone, English language
+- Specific achievements and skills
+- Direct reference to job offer
+- Proper formatting with paragraphs separated by blank lines
+
+Formatting structure:
+- First sentence: introduction and interest in position
+- Middle paragraph (2-3 sentences): experience alignment with requirements
+- Last sentence: professional closing with call to action
+
+Use newline between paragraphs for readability.
+
+Return only the cover letter content with proper formatting.

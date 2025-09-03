@@ -1,0 +1,595 @@
+/* static/style.css */
+/* General Editor Layout Styles */
+
+/* Import document-specific styles */
+@import url('document.css');
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    line-height: 1.6;
+    margin: 0;
+    padding: 20px;
+    background-color: #1a1a1a; /* Very dark background */
+    color: #e0e0e0; /* Light text */
+}
+
+.container {
+    max-width: 95%;
+    margin: 0 auto;
+    background-color: #2d2d2d; /* Dark container */
+    padding: 20px 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    border: 1px solid #404040; /* Dark border */
+}
+
+header h1 {
+    color: #61dafb; /* Light cyan for dark theme */
+    text-align: center; margin-top:0; margin-bottom: 5px;
+    border-bottom: 2px solid #61dafb; /* Matching accent */
+    padding-bottom: 10px;
+    font-size: 2em;
+}
+header p {
+    text-align: center; font-size: 0.95em; color: #b0b0b0; margin-top: 0; margin-bottom: 15px;
+}
+header p small a { color: #61dafb; text-decoration: none; }
+header p small a:hover { text-decoration: underline; }
+
+
+/* Job Description Context Area */
+.job-context-wrapper {
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #404040;
+    border-radius: 6px;
+    background-color: #2a2a2a;
+}
+.job-context-wrapper label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #e0e0e0;
+}
+.job-context-wrapper textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #505050;
+    border-radius: 6px;
+    font-size: 0.95em;
+    box-sizing: border-box;
+    background-color: #3a3a3a;
+    color: #e0e0e0;
+    line-height: 1.5;
+    min-height: 100px;
+    resize: vertical;
+}
+
+
+/* Main Layout for Form and Preview (Side-by-side) */
+.main-layout {
+    display: flex;
+    gap: 25px; /* Increased space */
+    margin-top: 20px;
+    min-height: 75vh;
+}
+
+.form-editor-wrapper {
+    flex: 1 1 58%; /* Form takes slightly more space */
+    padding: 20px;
+    overflow-y: auto;
+    border: 1px solid #404040;
+    border-radius: 6px;
+    background-color: #2a2a2a;
+    box-sizing: border-box;
+}
+.preview-pane-wrapper {
+    flex: 1 1 42%; /* Preview takes slightly less */
+    border: 1px solid #404040;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    background-color: #2a2a2a;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.form-editor-wrapper > h3 {
+    margin-top: 0; margin-bottom: 20px; color: #e0e0e0; /* Light header for dark theme */
+    border-bottom: 1px solid #606060; padding-bottom: 10px;
+    text-align: center; font-size: 1.6em;
+}
+.preview-pane-wrapper .preview-controls {
+    padding: 12px 18px; border-bottom: 1px solid #505050; background-color: #333333;
+    display:flex; justify-content:space-between; align-items:center;
+}
+.preview-pane-wrapper .preview-controls h2 {
+    margin: 0; font-size: 1.4em; color: #61dafb; /* Accent cyan */
+}
+#html-output {
+    flex-grow: 1; overflow-y: auto; padding: 0;
+    box-sizing: border-box; background-color: white;
+}
+
+/* Ensure preview matches PDF styling exactly */
+#html-output .markdown-body {
+    /* Override any conflicting styles to match document.css exactly */
+    background-color: white !important;
+    padding: 40px !important;
+    margin: 0 auto !important;
+    max-width: 210mm !important;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1) !important;
+}
+
+
+/* --- FORM UI STYLES --- */
+.controls-header {
+    display: flex; justify-content: center; align-items: center; gap: 15px;
+    margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px dashed #e1e4e8;
+}
+.form-section {
+    margin-bottom: 30px; padding: 20px; border: 1px solid #404040;
+    background-color: #333333; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.form-section > h4 {
+    margin-top: 0; display: flex !important; justify-content: space-between; align-items: center;
+    color: #e0e0e0; padding-bottom: 12px; border-bottom: 1px solid #505050;
+    margin-bottom: 20px; font-size: 1.3em;
+}
+.form-section > h4 > span {
+    flex: 1;
+}
+.form-section > h4 > button,
+.form-section > h4 > div {
+    flex-shrink: 0 !important;
+    margin-left: 10px;
+    /* Force visibility for all buttons in h4 */
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+.form-section > h4 .form-section-header-btn { 
+    font-size: 0.8em; padding: 6px 12px; 
+    /* Force visibility */
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    background-color: #2c974b !important;
+    color: white !important;
+    border: 1px solid rgba(27,31,36,0.15) !important;
+    border-radius: 6px !important;
+    cursor: pointer !important;
+}
+.form-section-sub-label {
+    display: block; margin-bottom: 10px; font-weight: 600; font-size: 1em; color: #e0e0e0;
+}
+
+
+.form-group { margin-bottom: 18px; }
+.form-group:last-of-type { margin-bottom: 0; }
+.form-group label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.9em; color: #e0e0e0; }
+.form-group input[type="text"], .form-group input[type="url"], .form-group input[type="email"],
+.form-group input[type="tel"], .form-group input[type="file"], .form-group input[type="number"],
+.form-group textarea, .form-group select {
+    width: 100%; padding: 9px 12px; border: 1px solid #505050; border-radius: 6px;
+    font-size: 1em; box-sizing: border-box; background-color: #3a3a3a; color: #e0e0e0; line-height: 20px;
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+.form-group input[type="file"] { background-color: #3a3a3a; padding: 6px; }
+#profile-photo-preview {
+    max-width: 150px; max-height: 150px; display: block; margin-top: 5px; margin-bottom: 10px;
+    border: 1px solid #ddd; border-radius: 4px; object-fit: cover;
+}
+
+/* Field Highlighting */
+.form-group input.green-field:focus, .form-group textarea.green-field:focus {
+    border-color: #2c974b; outline: none; box-shadow: 0 0 0 3px rgba(44, 151, 75, 0.3); background-color: #2a2a2a; color: #e0e0e0;
+}
+.form-group input.blue-field:focus, .form-group textarea.blue-field:focus,
+.job-context-wrapper textarea:focus {
+    border-color: #007bff; outline: none; box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.3); background-color: #2a2a2a; color: #e0e0e0;
+}
+/* Default focus for non-green/blue fields */
+.form-group input:not(.green-field):not(.blue-field):focus, 
+.form-group textarea:not(.green-field):not(.blue-field):focus {
+    border-color: #0969da; outline: none; box-shadow: 0 0 0 3px rgba(9,105,218,0.3); background-color: #2a2a2a; color: #e0e0e0;
+}
+
+.form-group textarea { min-height: 80px; resize: vertical; font-family: inherit; }
+.form-group textarea.user-role-description { min-height: 60px; }
+
+
+/* General button styling */
+button, .form-button { 
+    padding: 9px 18px; color: white; border: 1px solid rgba(27,31,36,0.15);
+    border-radius: 6px; cursor: pointer; margin-right: 8px; margin-top: 5px;
+    font-size: 0.95em; font-weight: 500; line-height: 20px;
+    transition: background-color 0.1s ease-in-out, filter 0.1s ease-in-out;
+    box-shadow: 0 1px 0 rgba(27,31,36,0.04), inset 0 1px 0 hsla(0,0%,100%,0.25);
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+}
+button .iconify { font-size: 1.1em; vertical-align: middle; }
+
+
+/* Specific button colors */
+.add-btn, /* Generic add button class - MUST BE FIRST */
+button.add-btn, /* Generic add button class */
+button#save-resume-btn, 
+button#add-experience-btn, button#add-education-btn, button#add-skill-category-btn,
+button#add-certification-btn, button#add-project-btn,
+button[id^="add-bullet-"]
+ { background-color: #2c974b !important; } /* Green for save and major add buttons */
+
+button#export-pdf-btn { background-color: #2c974b; } /* Green for PDF export */
+button#reset-resume-btn { background-color: #dc3545; } /* Red for reset */
+
+button.remove-btn { background-color: #d73a49; } /* Red for remove */
+
+button.ai-generate-btn {
+    background-color: #17a2b8; /* Teal for AI */
+    padding: 5px 10px; font-size: 0.85em;
+}
+
+button.form-button { background-color: #007bff; } /* Blue for form buttons */
+.experience-entry-header button.ai-generate-btn { margin-left: auto; margin-right: 0;}
+
+/* Hover effect for all styled buttons */
+button:hover, .form-button:hover { filter: brightness(90%); }
+
+
+.bullet-list { list-style: none; padding-left: 0; margin-top: 8px; }
+.bullet-list li { display: flex; align-items: flex-start; margin-bottom: 8px; } /* Changed to flex-start for better textarea alignment */
+.bullet-list input[type="text"], .bullet-list textarea { 
+    flex-grow: 1; 
+    margin-right: 8px; 
+    background-color: #3a3a3a; 
+    color: #e0e0e0;
+    border: 1px solid #505050;
+    padding: 8px 12px;
+    border-radius: 4px;
+    height: auto; /* Allow natural height */
+    min-height: 40px; /* Minimum height for better visibility */
+    font-family: inherit;
+    line-height: 1.4;
+    word-wrap: break-word;
+    resize: vertical; /* Allow vertical resizing for textareas */
+}
+
+.bullet-list button.remove-btn,
+.contact-item-actions button.remove-btn { 
+    padding: 5px 9px; font-size: 0.8em; line-height: 1; 
+    margin-top: 0;
+}
+
+.button-group-sm button { /* "Add Phone", "Add Email" etc. */
+    font-size: 0.85em; padding: 6px 10px; margin-bottom: 8px;
+    background-color: #4a4a4a; color: #e0e0e0; border: 1px solid #606060;
+}
+.button-group-sm button:hover { background-color: #5a5a5a; }
+
+.contact-item-row {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) auto;
+    gap: 10px 15px; align-items: end; padding: 15px; border: 1px solid #505050;
+    border-radius: 6px; margin-bottom: 10px; background-color: #3a3a3a; /* Dark bg for item rows */
+}
+.contact-item-row .form-group { margin-bottom: 0; }
+.contact-item-actions { align-self: end; margin-bottom: 0px; }
+
+.list-entry { /* Common style for experience, education entries etc. */
+    padding: 15px; border: 1px solid #505050; margin-bottom:15px; border-radius:6px; background-color: #3a3a3a;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+.list-entry .remove-btn { margin-top: 15px; }
+.list-entry hr { border: none; border-top: 1px dashed #e1e4e8; margin: 15px 0; }
+
+.experience-entry-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.experience-entry-header .form-group { flex-grow: 1; margin-right: 10px; margin-bottom: 0;}
+.experience-entry-header .form-group label { font-size: 0.8em; } /* Smaller labels for inline elements */
+
+.num-bullets-group { display: flex; align-items: center; gap: 8px; margin-top: 5px; margin-bottom: 10px;}
+.num-bullets-group label { margin-bottom: 0; white-space: nowrap; font-size:0.85em; }
+.num-bullets-group input[type="number"] { width: 60px; padding: 6px 8px; font-size:0.9em; }
+
+
+#status-message { 
+    padding: 12px 15px; border-radius: 6px; text-align: center; 
+    margin-bottom: 20px; font-weight: 500; min-height: 1.5em; 
+    transition: opacity 0.3s ease-in-out, background-color 0.3s ease-in-out;
+    opacity: 0; display:none; /* Hidden by default */
+}
+#status-message.active { opacity: 1; display:block; }
+#status-message.status-success { background-color: #d1e7dd; border: 1px solid #badbcc; color: #0f5132;}
+#status-message.status-error { background-color: #f8d7da; border: 1px solid #f5c2c7; color: #842029;}
+#status-message.status-info { background-color: #cff4fc; border: 1px solid #b6effb; color: #055160;}
+
+/* --- END OF FORM UI STYLES --- */
+
+.separator {
+    border: 0; height: 1px;
+    background-image: linear-gradient(to right, rgba(0,0,0,0), rgba(0,0,0,0.15), rgba(0,0,0,0));
+    margin: 30px 0;
+}
+.lorem-content { background-color: #f0f6fc; padding: 20px; border-radius: 6px; border: 1px solid #c8e1ff; }
+.lorem-content h2, .lorem-content h3 { color: #0366d6; }
+footer { text-align: center; margin-top: 30px; padding: 20px 0; border-top: 1px solid #e1e4e8; font-size: 0.9em; color: #586069;}
+
+
+/* Print specific styles */
+@media print {
+  body { padding: 0; margin: 0; background-color: white !important; color: black !important; }
+  header, .main-layout button, .controls-header, .form-editor-wrapper,
+  .preview-pane-wrapper .preview-controls, footer, .separator, .lorem-content,
+  .job-context-wrapper {
+    display: none !important;
+  }
+  .container { max-width: none; box-shadow: none; padding: 0; margin: 0; background-color: white !important;}
+  .main-layout, .preview-pane-wrapper {
+    display: block !important; width: 100% !important; height: auto !important;
+    overflow: visible !important; box-shadow: none !important; border: none !important;
+    background-color: white !important;
+  }
+  #html-output {
+    padding: 0 !important; margin: 0 !important; box-shadow: none !important; border: none !important;
+    background-color: white !important; overflow: visible !important; height: auto !important;
+  }
+  .markdown-body {
+    padding: 10mm !important; /* A4 typical margin */
+    margin: 0 auto !important; 
+    max-width: none !important;
+    min-height: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    font-size: 9pt !important; 
+    background-color: white !important;
+    color: black !important;
+  }
+  .markdown-body a { color: black !important; text-decoration: none !important; }
+  .markdown-body .resume-photo { 
+    display: block !important;
+    visibility: visible !important;
+    -webkit-print-color-adjust: exact !important; /* For Chrome */
+    print-color-adjust: exact !important; /* Standard */
+  }
+}
+
+/* API Key Management Section */
+.api-key-section {
+    background-color: #2a3a4a; /* Dark blue background */
+    border-color: #4a5a6a;
+    margin-bottom: 25px;
+}
+.api-key-section h4 {
+    color: #61dafb; /* Consistent with other special sections */
+    border-bottom-color: #4a5a6a;
+    display: flex; align-items: center;
+}
+.api-key-section h4 .iconify { font-size: 1.2em; margin-right: 5px; }
+
+#api-key-input {
+    flex-grow: 1;
+    font-family: monospace; /* Good for keys */
+}
+#save-api-key-btn {
+    background-color: #28a745; /* Green for save */
+}
+#save-api-key-btn .iconify { font-size: 1.2em; }
+
+.status-badge {
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-weight: 500;
+    margin-top: 10px;
+    text-align: left;
+    border: 1px solid transparent;
+}
+.status-badge.status-not_set, .status-badge.status-placeholder {
+    background-color: #fff3cd; color: #856404; border-color: #ffeeba;
+}
+.status-badge.status-active {
+    background-color: #d4edda; color: #155724; border-color: #c3e6cb;
+}
+.status-badge.status-error {
+    background-color: #f8d7da; color: #721c24; border-color: #f5c6cb;
+}
+.status-badge.status-unknown {
+    background-color: #e2e3e5; color: #383d41; border-color: #d6d8db;
+}
+.status-badge .iconify { margin-right: 5px; vertical-align: text-bottom;}
+
+/* Language switcher styles */
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.title-section {
+    flex: 1;
+}
+
+.language-switcher {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.lang-btn {
+    background: #3a3a3a;
+    border: 2px solid #505050;
+    color: #e0e0e0;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9em;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.lang-btn:hover {
+    background: #4a4a4a;
+    border-color: #606060;
+}
+
+.lang-btn.active {
+    background: #61dafb;
+    border-color: #61dafb;
+    color: #1a1a1a;
+}
+
+.flag-icon {
+    font-size: 1.2em;
+}
+
+/* Project AI Generation Button Container */
+.ai-generate-container {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.ai-generate-container button {
+    margin-top: 0;
+    margin-right: 0;
+    flex-shrink: 0;
+}
+
+/* Collapsible Sections */
+.collapsible-section {
+    border: 1px solid #505050;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.collapsible-header {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 15px 18px;
+    margin: 0;
+    background-color: #333333;
+    border-bottom: 1px solid #505050;
+    transition: background-color 0.2s ease;
+    user-select: none;
+}
+
+.collapsible-header:hover {
+    background-color: #404040;
+}
+
+.collapse-icon {
+    margin-right: 10px;
+    transition: transform 0.3s ease;
+    font-size: 1.2em;
+}
+
+.collapsible-section.collapsed .collapse-icon {
+    transform: rotate(-90deg);
+}
+
+.collapsible-content {
+    padding: 20px;
+    transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+    overflow: hidden;
+    max-height: 1000px; /* Large enough for content */
+}
+
+.collapsible-section.collapsed .collapsible-content {
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    opacity: 0;
+}
+
+/* Personal Info Layout */
+.personal-info-main-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 30px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.personal-info-name-section {
+    flex: 1;
+    min-width: 250px;
+}
+
+.personal-info-photo-section {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 10px;
+}
+
+.personal-info-photo-section #profile-photo-preview {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #505050;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.personal-info-contact-buttons {
+    flex: 1;
+    min-width: 250px;
+}
+
+.personal-info-contact-buttons .button-group-sm {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    overflow-x: auto;
+    padding-bottom: 5px;
+}
+
+.contact-items-grid {
+    width: 100%;
+    overflow-x: auto;
+}
+
+/* Contact Items Grid Layout */
+#contact-items-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 15px;
+    min-width: max-content;
+    overflow-x: auto;
+    padding-bottom: 10px;
+}
+
+/* Mobile responsive for personal info */
+@media (max-width: 768px) {
+    .personal-info-main-row {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .personal-info-name-section,
+    .personal-info-contact-buttons {
+        min-width: auto;
+        width: 100%;
+    }
+    
+    .personal-info-photo-section {
+        order: -1;
+    }
+    
+    #contact-items-container {
+        grid-template-columns: 1fr;
+    }
+}

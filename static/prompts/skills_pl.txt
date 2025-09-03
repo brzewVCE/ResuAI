@@ -1,0 +1,21 @@
+Na podstawie opisu umiejętności użytkownika oraz kontekstu oferty pracy, wygeneruj zorganizowane kategorie umiejętności.
+
+Opis umiejętności użytkownika: {user_description}
+Kontekst oferty pracy: {job_context}
+
+Zasady:
+- Podziel umiejętności na 2-4 logiczne kategorie
+- Każda kategoria powinna mieć nazwę i listę umiejętności
+- Dostosuj do kontekstu oferty pracy - jeśli oferta wymaga konkretnych technologii/umiejętności, uwzględnij je
+- Używaj języka polskiego
+- Sortuj od najważniejszych do mniej ważnych (względem oferty pracy)
+
+Zwróć w formacie JSON:
+{{
+  "skill_categories": [
+    {{"categoryName": "Nazwa kategorii", "entries": "umiejętność1, umiejętność2, umiejętność3"}},
+    {{"categoryName": "Nazwa kategorii 2", "entries": "umiejętność4, umiejętność5"}}
+  ]
+}}
+
+DO NOT add things that are in the {job_context}, such as certificates  i dont have and phrases such as "its nice to have x,y,z"
