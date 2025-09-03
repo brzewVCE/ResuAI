@@ -101,32 +101,9 @@ Generator CV wykorzystujący AI (Gemini) do tworzenia profesjonalnych CV na pods
 - **Narzędzia**: Excel, Jupyter Notebook, Git
 - **Soft Skills**: Zarządzanie Projektami, Prezentacje, Komunikacja
 
-## Rozwiązywanie problemów
-
-### AI nie działa
-- Sprawdź czy klucz API jest prawidłowy
-- Upewnij się, że masz dostęp do internetu
-- Sprawdź status w sekcji "API Key Management"
-
-### Błędy instalacji
-- Upewnij się, że masz Python 3.7+
-- Sprawdź czy pip jest zaktualizowany: `pip install --upgrade pip`
-- Na Windows może być potrzebny Visual C++ Redistributable
-
-### Problemy z PDF
-- Użyj Ctrl+P w przeglądarce
-- Wybierz "Save as PDF"
-- Dostosuj ustawienia marginesów i skali
-
-## Wsparcie
-
-Jeśli masz problemy:
-1. Sprawdź konsole przeglądarki (F12) czy są błędy JavaScript
-2. Sprawdź terminal czy są błędy Python
-3. Upewnij się, że `ai_config.json` zawiera prawidłowy klucz API
-
 ## Bezpieczeństwo
 
 - Klucz API jest przechowywany lokalnie w `ai_config.json`
 - Nie udostępniaj tego pliku publicznie
-- Aplikacja działa lokalnie - dane nie są wysyłane na zewnętrzne serwery (poza API Gemini)
+- Aplikacja działa lokalnie - poufne dane nie są wysyłane na zewnętrzne serwery
+- Dane wysyłane do Gemini nie zawierają danych osobistych
