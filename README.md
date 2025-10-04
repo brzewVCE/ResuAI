@@ -15,7 +15,7 @@ Generator CV wykorzystujący AI (Gemini) do tworzenia profesjonalnych CV na pods
 1. **Zainstaluj zależności**:
    ```bash
    pip install -r requirements.txt
-   playwright install
+   python -m playwright install
    ```
    
    Lub użyj pliku batch na Windows:
